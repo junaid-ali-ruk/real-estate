@@ -17,7 +17,7 @@ export async function completeAgentOnboarding(data: AgentOnboardingData) {
     throw new Error("Not authenticated");
   }
 
-const { data: agent } = await sanityFetch({
+  const { data: agent } = await sanityFetch({
     query: AGENT_ID_BY_USER_QUERY,
     params: { userId },
   });

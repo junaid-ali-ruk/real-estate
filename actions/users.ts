@@ -4,10 +4,7 @@ import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { client } from "@/lib/sanity/client";
 import { sanityFetch } from "@/lib/sanity/live";
-import {
-  USER_EXISTS_QUERY,
-  USER_SAVED_IDS_QUERY,
-} from "@/lib/sanity/queries";
+import { USER_EXISTS_QUERY, USER_SAVED_IDS_QUERY } from "@/lib/sanity/queries";
 import type { UserOnboardingData, UserProfileData } from "@/types";
 
 export async function completeUserOnboarding(data: UserOnboardingData) {
@@ -64,7 +61,7 @@ export async function updateUserProfile(data: UserProfileData) {
     throw new Error("Not authenticated");
   }
 
-const { data: user } = await sanityFetch({
+  const { data: user } = await sanityFetch({
     query: USER_EXISTS_QUERY,
     params: { clerkId: userId },
   });
@@ -91,7 +88,7 @@ export async function toggleSavedListing(
     throw new Error("Not authenticated");
   }
 
-// Check if user has completed onboarding
+  // Check if user has completed onboarding
   const clerk = await clerkClient();
   const clerkUser = await clerk.users.getUser(userId);
   if (!clerkUser.publicMetadata?.onboardingComplete) {
@@ -134,7 +131,7 @@ export async function getUserSavedIds(): Promise<string[]> {
     return [];
   }
 
-const { data: user } = await sanityFetch({
+  const { data: user } = await sanityFetch({
     query: USER_SAVED_IDS_QUERY,
     params: { clerkId: userId },
   });
