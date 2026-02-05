@@ -1,4 +1,4 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { OnboardingForm } from "@/components/forms/OnboardingForm";
 import { sanityFetch } from "@/lib/sanity/live";
@@ -18,6 +18,20 @@ export default async function OnboardingPage() {
   });
 
   if (existingUser) {
+    // User exists in Sanity - ensure Clerk metadata is synced
+    const clerk = await clerkClient();
+    const clerkUser = await clerk.users.getUser(userId);
+
+    if (!clerkUser.publicMetadata?.onboardingComplete) {
+      // Sync Clerk metadata with Sanity state
+      await clerk.users.updateUser(userId, {
+        publicMetadata: {
+          ...clerkUser.publicMetadata,
+          onboardingComplete: true,
+        },
+      });
+    }
+
     redirect("/");
   }
 

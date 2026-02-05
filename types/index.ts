@@ -1,3 +1,12 @@
+// Amenity type
+export interface Amenity {
+  _id: string;
+  value: string;
+  label: string;
+  icon?: string | null;
+  order?: number;
+}
+
 // Property types
 export interface Address {
   street: string;

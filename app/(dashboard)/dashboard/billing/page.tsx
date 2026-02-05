@@ -1,6 +1,6 @@
 "use client";
 
-import { PricingTable } from "@clerk/nextjs";
+import { PricingTable, UserProfile } from "@clerk/nextjs";
 
 export default function BillingPage() {
   return (
@@ -16,7 +16,7 @@ export default function BillingPage() {
       </div>
 
       {/* Clerk's built-in PricingTable handles everything */}
-      <PricingTable />
+      <UserProfile routing="hash" />
     </div>
   );
 }

@@ -4,7 +4,11 @@ import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { client } from "@/lib/sanity/client";
 import { sanityFetch } from "@/lib/sanity/live";
-import { USER_EXISTS_QUERY, USER_SAVED_IDS_QUERY } from "@/lib/sanity/queries";
+import {
+  AGENT_BY_USER_ID_QUERY,
+  USER_EXISTS_QUERY,
+  USER_SAVED_IDS_QUERY,
+} from "@/lib/sanity/queries";
 import type { UserOnboardingData, UserProfileData } from "@/types";
 
 export async function completeUserOnboarding(data: UserOnboardingData) {
@@ -79,6 +83,63 @@ export async function updateUserProfile(data: UserProfileData) {
     .commit();
 }
 
+/**
+ * Ensures Clerk metadata is synced with Sanity state for saving listings.
+ * Returns user with saved IDs if found, null if user needs onboarding.
+ */
+async function ensureOnboardingCompleteForSave(userId: string) {
+  const clerk = await clerkClient();
+  const clerkUser = await clerk.users.getUser(userId);
+
+  // Check if user exists in Sanity
+  const { data: user } = await sanityFetch({
+    query: USER_SAVED_IDS_QUERY,
+    params: { clerkId: userId },
+  });
+
+  if (user) {
+    // User exists - sync Clerk metadata if needed
+    if (!clerkUser.publicMetadata?.onboardingComplete) {
+      await clerk.users.updateUser(userId, {
+        publicMetadata: {
+          ...clerkUser.publicMetadata,
+          onboardingComplete: true,
+        },
+      });
+    }
+    return user;
+  }
+
+  // Check if agent exists - agents can also save properties
+  const { data: agent } = await sanityFetch({
+    query: AGENT_BY_USER_ID_QUERY,
+    params: { userId },
+  });
+
+  if (agent) {
+    // Agent exists but no user record - create a user record for them
+    // so they can use savedListings feature
+    const newUser = await client.create({
+      _type: "user",
+      clerkId: userId,
+      name: agent.name,
+      email: agent.email,
+      phone: "",
+      savedListings: [],
+      createdAt: new Date().toISOString(),
+    });
+
+    // Sync Clerk metadata
+    await clerk.users.updateUser(userId, {
+      publicMetadata: { ...clerkUser.publicMetadata, onboardingComplete: true },
+    });
+
+    return { _id: newUser._id, savedIds: [] };
+  }
+
+  return null;
+}
+
 export async function toggleSavedListing(
   propertyId: string
 ): Promise<{ success: boolean; requiresOnboarding?: boolean }> {
@@ -88,17 +149,8 @@ export async function toggleSavedListing(
     throw new Error("Not authenticated");
   }
 
-  // Check if user has completed onboarding
-  const clerk = await clerkClient();
-  const clerkUser = await clerk.users.getUser(userId);
-  if (!clerkUser.publicMetadata?.onboardingComplete) {
-    return { success: false, requiresOnboarding: true };
-  }
-
-  const { data: user } = await sanityFetch({
-    query: USER_SAVED_IDS_QUERY,
-    params: { clerkId: userId },
-  });
+  // Check/sync onboarding status and get user
+  const user = await ensureOnboardingCompleteForSave(userId);
 
   if (!user) {
     return { success: false, requiresOnboarding: true };

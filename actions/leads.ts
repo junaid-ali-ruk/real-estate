@@ -4,11 +4,62 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { client } from "@/lib/sanity/client";
 import { sanityFetch } from "@/lib/sanity/live";
 import {
+  AGENT_BY_USER_ID_QUERY,
   AGENT_ID_BY_USER_QUERY,
   LEAD_AGENT_REF_QUERY,
   LEAD_EXISTS_QUERY,
   USER_CONTACT_QUERY,
 } from "@/lib/sanity/queries";
+
+/**
+ * Ensures Clerk metadata is synced with Sanity state.
+ * Returns user contact info if found, null if user needs onboarding.
+ */
+async function ensureOnboardingComplete(userId: string) {
+  const clerk = await clerkClient();
+  const clerkUser = await clerk.users.getUser(userId);
+
+  // Check if user exists in Sanity (regular user)
+  const { data: user } = await sanityFetch({
+    query: USER_CONTACT_QUERY,
+    params: { clerkId: userId },
+  });
+
+  if (user) {
+    // User exists - sync Clerk metadata if needed
+    if (!clerkUser.publicMetadata?.onboardingComplete) {
+      await clerk.users.updateUser(userId, {
+        publicMetadata: {
+          ...clerkUser.publicMetadata,
+          onboardingComplete: true,
+        },
+      });
+    }
+    return user;
+  }
+
+  // Check if agent exists in Sanity (agent user)
+  const { data: agent } = await sanityFetch({
+    query: AGENT_BY_USER_ID_QUERY,
+    params: { userId },
+  });
+
+  if (agent) {
+    // Agent exists - sync Clerk metadata if needed and return agent as user contact
+    if (!clerkUser.publicMetadata?.onboardingComplete) {
+      await clerk.users.updateUser(userId, {
+        publicMetadata: {
+          ...clerkUser.publicMetadata,
+          onboardingComplete: true,
+        },
+      });
+    }
+    return { name: agent.name, email: agent.email, phone: null };
+  }
+
+  // No user or agent found - needs onboarding
+  return null;
+}
 
 export async function createLead(
   propertyId: string,
@@ -24,18 +75,8 @@ export async function createLead(
     throw new Error("Not authenticated");
   }
 
-  // Check if user has completed onboarding
-  const clerk = await clerkClient();
-  const clerkUser = await clerk.users.getUser(userId);
-  if (!clerkUser.publicMetadata?.onboardingComplete) {
-    return { success: false, requiresOnboarding: true };
-  }
-
-  // Get user info from Sanity
-  const { data: user } = await sanityFetch({
-    query: USER_CONTACT_QUERY,
-    params: { clerkId: userId },
-  });
+  // Check/sync onboarding status and get user contact info
+  const user = await ensureOnboardingComplete(userId);
 
   if (!user) {
     return { success: false, requiresOnboarding: true };

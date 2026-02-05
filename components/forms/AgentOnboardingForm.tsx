@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -51,7 +52,11 @@ export function AgentOnboardingForm() {
           licenseNumber: data.licenseNumber,
           agency: data.agency,
         });
-      } catch (_error) {
+      } catch (error) {
+        // Re-throw redirect errors - they're not actual errors
+        if (isRedirectError(error)) {
+          throw error;
+        }
         toast.error("Failed to complete setup. Please try again.");
       }
     });
@@ -131,7 +136,12 @@ export function AgentOnboardingForm() {
               )}
             />
 
-            <LoadingButton type="submit" className="w-full" loading={isPending} loadingText="Setting up...">
+            <LoadingButton
+              type="submit"
+              className="w-full"
+              loading={isPending}
+              loadingText="Setting up..."
+            >
               Complete Agent Setup
             </LoadingButton>
           </form>

@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Amenity } from "@/types";
 
 const PROPERTY_TYPES = [
   { value: "all", label: "All Types" },
@@ -56,22 +57,11 @@ const DAYS_ON_MARKET_OPTIONS = [
   { value: "30", label: "Last 30 days" },
 ];
 
-const AMENITIES_OPTIONS = [
-  { value: "pool", label: "Pool" },
-  { value: "garage", label: "Garage" },
-  { value: "gym", label: "Gym" },
-  { value: "garden", label: "Garden" },
-  { value: "fireplace", label: "Fireplace" },
-  { value: "central-ac", label: "Central AC" },
-  { value: "hardwood-floors", label: "Hardwood Floors" },
-  { value: "washer-dryer", label: "Washer/Dryer" },
-  { value: "dishwasher", label: "Dishwasher" },
-  { value: "balcony", label: "Balcony" },
-  { value: "parking", label: "Parking" },
-  { value: "security-system", label: "Security System" },
-];
+interface FilterSidebarProps {
+  amenities: Amenity[];
+}
 
-export function FilterSidebar() {
+export function FilterSidebar({ amenities }: FilterSidebarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -542,29 +532,33 @@ export function FilterSidebar() {
             </div>
 
             {/* Amenities */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Amenities</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {AMENITIES_OPTIONS.map((amenity) => (
-                  <div
-                    key={amenity.value}
-                    className="flex items-center space-x-2"
-                  >
-                    <Checkbox
-                      id={`amenity-${amenity.value}`}
-                      checked={filters.amenities.includes(amenity.value)}
-                      onCheckedChange={() => handleAmenityToggle(amenity.value)}
-                    />
-                    <Label
-                      htmlFor={`amenity-${amenity.value}`}
-                      className="text-sm cursor-pointer font-normal"
+            {amenities.length > 0 && (
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Amenities</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {amenities.map((amenity) => (
+                    <div
+                      key={amenity.value}
+                      className="flex items-center space-x-2"
                     >
-                      {amenity.label}
-                    </Label>
-                  </div>
-                ))}
+                      <Checkbox
+                        id={`amenity-${amenity.value}`}
+                        checked={filters.amenities.includes(amenity.value)}
+                        onCheckedChange={() =>
+                          handleAmenityToggle(amenity.value)
+                        }
+                      />
+                      <Label
+                        htmlFor={`amenity-${amenity.value}`}
+                        className="text-sm cursor-pointer font-normal"
+                      >
+                        {amenity.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </CollapsibleContent>
         </Collapsible>
 

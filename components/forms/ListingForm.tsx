@@ -46,13 +46,9 @@ const STATUS_OPTIONS = [
   { value: "sold", label: "Sold" },
 ];
 
-// Amenity type from Sanity
-export interface Amenity {
-  _id: string;
-  name: string;
-  slug: string;
-  icon?: string | null;
-}
+// Re-export Amenity type from shared types
+import type { Amenity } from "@/types";
+export type { Amenity };
 
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
@@ -151,7 +147,8 @@ export function ListingForm({
         .join(", ")
     : "";
 
-  const [addressDisplayValue, setAddressDisplayValue] = useState(initialAddressValue);
+  const [addressDisplayValue, setAddressDisplayValue] =
+    useState(initialAddressValue);
 
   const form = useForm<FormDataInput, unknown, FormDataOutput>({
     resolver: zodResolver(formSchema),
@@ -521,25 +518,30 @@ export function ListingForm({
                           className="flex items-center space-x-2"
                         >
                           <Checkbox
-                            id={amenity.slug}
-                            checked={field.value?.includes(amenity.slug)}
+                            id={amenity.value}
+                            checked={field.value?.includes(amenity.value)}
                             onCheckedChange={(checked: boolean) => {
                               const currentValue = field.value || [];
                               if (checked) {
-                                field.onChange([...currentValue, amenity.slug]);
+                                field.onChange([
+                                  ...currentValue,
+                                  amenity.value,
+                                ]);
                               } else {
                                 field.onChange(
-                                  currentValue.filter((v) => v !== amenity.slug)
+                                  currentValue.filter(
+                                    (v) => v !== amenity.value,
+                                  ),
                                 );
                               }
                             }}
                             disabled={isPending}
                           />
                           <label
-                            htmlFor={amenity.slug}
+                            htmlFor={amenity.value}
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
                           >
-                            {amenity.name}
+                            {amenity.label}
                           </label>
                         </div>
                       ))}
@@ -589,7 +591,8 @@ export function ListingForm({
           <CardHeader>
             <CardTitle>Location on Map</CardTitle>
             <p className="text-sm text-muted-foreground">
-              The map updates automatically when you select an address. You can also click to fine-tune the exact location.
+              The map updates automatically when you select an address. You can
+              also click to fine-tune the exact location.
             </p>
           </CardHeader>
           <CardContent>
@@ -605,7 +608,11 @@ export function ListingForm({
           <Button type="button" variant="outline" asChild>
             <a href="/dashboard/listings">Cancel</a>
           </Button>
-          <LoadingButton type="submit" loading={isPending} loadingText="Saving...">
+          <LoadingButton
+            type="submit"
+            loading={isPending}
+            loadingText="Saving..."
+          >
             {mode === "edit" ? "Update Listing" : "Create Listing"}
           </LoadingButton>
         </div>

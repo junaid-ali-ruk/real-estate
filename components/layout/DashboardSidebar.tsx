@@ -81,9 +81,19 @@ export function DashboardSidebar() {
         {/* Navigation */}
         <nav className="space-y-1" aria-label="Dashboard navigation">
           {navItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            // Check for exact match first
+            const isExactMatch = pathname === item.href;
+            // For startsWith matching, ensure no other nav item is a more specific match
+            const isStartsWithMatch =
+              item.href !== "/dashboard" &&
+              pathname.startsWith(item.href) &&
+              !navItems.some(
+                (other) =>
+                  other.href !== item.href &&
+                  other.href.startsWith(item.href) &&
+                  pathname.startsWith(other.href),
+              );
+            const isActive = isExactMatch || isStartsWithMatch;
 
             return (
               <Link
@@ -93,33 +103,19 @@ export function DashboardSidebar() {
                   "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-[background-color,color,transform] duration-200",
                   isActive
                     ? "bg-primary text-primary-foreground shadow-warm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
+                    : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent",
                 )}
                 aria-current={isActive ? "page" : undefined}
               >
-                <item.icon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                <item.icon
+                  className="h-5 w-5 flex-shrink-0"
+                  aria-hidden="true"
+                />
                 <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
-
-        {/* Quick Stats (Optional) */}
-        <div className="mt-10 pt-6 border-t border-sidebar-border">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">
-            Quick Stats
-          </p>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Active Listings</span>
-              <span className="text-sm font-semibold tabular-nums">—</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">New Leads</span>
-              <span className="text-sm font-semibold tabular-nums">—</span>
-            </div>
-          </div>
-        </div>
       </div>
     </aside>
   );

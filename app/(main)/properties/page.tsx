@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { sanityFetch } from "@/lib/sanity/live";
 import {
+  AMENITIES_QUERY,
   PROPERTIES_COUNT_QUERY,
   PROPERTIES_SEARCH_QUERY,
 } from "@/lib/sanity/queries";
@@ -89,16 +90,20 @@ export default async function PropertiesPage({
     end,
   };
 
-  const [{ data: properties }, { data: totalCount }] = await Promise.all([
-    sanityFetch({
-      query: PROPERTIES_SEARCH_QUERY,
-      params: queryParams,
-    }),
-    sanityFetch({
-      query: PROPERTIES_COUNT_QUERY,
-      params: queryParams,
-    }),
-  ]);
+  const [{ data: properties }, { data: totalCount }, { data: amenities }] =
+    await Promise.all([
+      sanityFetch({
+        query: PROPERTIES_SEARCH_QUERY,
+        params: queryParams,
+      }),
+      sanityFetch({
+        query: PROPERTIES_COUNT_QUERY,
+        params: queryParams,
+      }),
+      sanityFetch({
+        query: AMENITIES_QUERY,
+      }),
+    ]);
 
   const totalPages = Math.ceil((totalCount || 0) / ITEMS_PER_PAGE);
   const hasFilters =
@@ -151,7 +156,7 @@ export default async function PropertiesPage({
               <Suspense
                 fallback={<Skeleton className="h-[500px] w-full rounded-2xl" />}
               >
-                <FilterSidebar />
+                <FilterSidebar amenities={amenities || []} />
               </Suspense>
             </div>
           </aside>

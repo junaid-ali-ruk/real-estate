@@ -286,10 +286,10 @@ export const ANALYTICS_LEADS_BY_PROPERTY_QUERY = defineQuery(/* groq */ `
 
 // Fetch all amenities for forms
 export const AMENITIES_QUERY = defineQuery(/* groq */ `
-  *[_type == "amenity"] | order(order asc, name asc) {
+  *[_type == "amenity"] | order(order asc, label asc) {
     _id,
-    name,
-    "slug": slug.current,
+    value,
+    label,
     icon
   }
 `);

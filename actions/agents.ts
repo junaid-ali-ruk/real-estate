@@ -86,8 +86,11 @@ export async function completeAgentOnboarding(data: AgentOnboardingData) {
 
   // Set Clerk metadata so middleware knows onboarding is complete
   const clerk = await clerkClient();
+  const clerkUser = await clerk.users.getUser(userId);
   await clerk.users.updateUserMetadata(userId, {
     publicMetadata: {
+      ...clerkUser.publicMetadata,
+      onboardingComplete: true,
       agentOnboardingComplete: true,
     },
   });
