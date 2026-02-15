@@ -13,7 +13,8 @@ interface ImageGalleryProps {
   title: string;
 }
 
-export function ImageGallery({ images, title }: ImageGalleryProps) {
+export function ImageGallery({ images: initialImages, title }: ImageGalleryProps) {
+  const images = initialImages.filter((img) => img.asset);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 

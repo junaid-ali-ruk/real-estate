@@ -2,8 +2,9 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { client } from "@/lib/sanity/client";
+import { serverClient } from "@/lib/sanity/server";
 import { sanityFetch } from "@/lib/sanity/live";
+import { listingSchema } from "@/lib/validations";
 import {
   AGENT_ID_BY_USER_QUERY,
   PROPERTY_AGENT_REF_QUERY,
@@ -62,6 +63,16 @@ export async function createListing(data: ListingFormDataWithImages) {
     throw new Error("Not authenticated");
   }
 
+  // Server-side validation
+  const validatedFields = listingSchema.safeParse({
+    ...data,
+    ...data.address,
+  });
+
+  if (!validatedFields.success) {
+    throw new Error("Invalid form data");
+  }
+
   const { data: agent } = await sanityFetch({
     query: AGENT_ID_BY_USER_QUERY,
     params: { userId },
@@ -71,7 +82,7 @@ export async function createListing(data: ListingFormDataWithImages) {
     throw new Error("Agent not found");
   }
 
-  await client.create({
+  await serverClient.create({
     _type: "property",
     title: data.title,
     slug: { _type: "slug", current: slugify(data.title) },
@@ -108,6 +119,16 @@ export async function updateListing(
     throw new Error("Not authenticated");
   }
 
+  // Server-side validation
+  const validatedFields = listingSchema.safeParse({
+    ...data,
+    ...data.address,
+  });
+
+  if (!validatedFields.success) {
+    throw new Error("Invalid form data");
+  }
+
   const { data: agent } = await sanityFetch({
     query: AGENT_ID_BY_USER_QUERY,
     params: { userId },
@@ -127,7 +148,7 @@ export async function updateListing(
     throw new Error("Unauthorized");
   }
 
-  await client
+  await serverClient
     .patch(listingId)
     .set({
       title: data.title,
@@ -180,7 +201,7 @@ export async function updateListingStatus(
     throw new Error("Unauthorized");
   }
 
-  await client
+  await serverClient
     .patch(listingId)
     .set({
       status,
@@ -215,5 +236,29 @@ export async function deleteListing(listingId: string) {
     throw new Error("Unauthorized");
   }
 
-  await client.delete(listingId);
+  // Handle referential integrity
+  // 1. Find all documents referencing this property
+  const referencingDocs = await serverClient.fetch<{ _id: string; _type: string }[]>(
+    `*[references($id)] { _id, _type }`,
+    { id: listingId }
+  );
+
+  const transaction = serverClient.transaction();
+
+  for (const doc of referencingDocs) {
+    if (doc._type === "lead") {
+      // Delete leads associated with this property
+      transaction.delete(doc._id);
+    } else if (doc._type === "user") {
+      // Remove from user's saved listings
+      transaction.patch(doc._id, (patch) =>
+        patch.unset([`savedListings[_ref == "${listingId}"]`])
+      );
+    }
+  }
+
+  // Delete the property itself
+  transaction.delete(listingId);
+
+  await transaction.commit();
 }

@@ -2,7 +2,8 @@
 
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { client } from "@/lib/sanity/client";
+import { hasAgentPlan } from "@/lib/clerk/plans";
+import { serverClient } from "@/lib/sanity/server";
 import { sanityFetch } from "@/lib/sanity/live";
 import {
   AGENT_BY_USER_ID_QUERY,
@@ -22,8 +23,7 @@ export async function createAgentDocument() {
   }
 
   // Verify user has agent plan
-  const hasAgentPlan = has({ plan: "agent" });
-  if (!hasAgentPlan) {
+  if (!hasAgentPlan(has)) {
     throw new Error("User does not have agent plan");
   }
 
@@ -44,7 +44,7 @@ export async function createAgentDocument() {
   }
 
   // Create agent document
-  const agent = await client.create({
+  const agent = await serverClient.create({
     _type: "agent",
     userId,
     name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Agent",
@@ -73,7 +73,7 @@ export async function completeAgentOnboarding(data: AgentOnboardingData) {
   }
 
   // Update agent in Sanity
-  await client
+  await serverClient
     .patch(agent._id)
     .set({
       bio: data.bio,
@@ -114,7 +114,7 @@ export async function updateAgentProfile(data: AgentProfileData) {
     throw new Error("Agent not found");
   }
 
-  await client
+  await serverClient
     .patch(agent._id)
     .set({
       bio: data.bio,

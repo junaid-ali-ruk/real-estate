@@ -1,7 +1,7 @@
 "use server";
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { client } from "@/lib/sanity/client";
+import { serverClient } from "@/lib/sanity/server";
 import { sanityFetch } from "@/lib/sanity/live";
 import {
   AGENT_BY_USER_ID_QUERY,
@@ -93,7 +93,7 @@ export async function createLead(
   }
 
   // Create lead document
-  await client.create({
+  await serverClient.create({
     _type: "lead",
     property: { _type: "reference", _ref: propertyId },
     agent: { _type: "reference", _ref: agentId },
@@ -137,5 +137,5 @@ export async function updateLeadStatus(
     throw new Error("Unauthorized");
   }
 
-  await client.patch(leadId).set({ status }).commit();
+  await serverClient.patch(leadId).set({ status }).commit();
 }

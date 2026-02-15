@@ -100,9 +100,9 @@ export function DashboardSidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-[background-color,color,transform] duration-200",
+                  "flex items-center gap-3 px-4 py-3 rounded-none text-sm font-bold uppercase tracking-widest transition-all duration-200",
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-warm"
+                    ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent",
                 )}
                 aria-current={isActive ? "page" : undefined}

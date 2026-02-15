@@ -1,6 +1,6 @@
 "use server";
 
-import { client } from "./client";
+import { serverClient } from "./server";
 
 export interface UploadedImage {
   _type: "image";
@@ -23,7 +23,7 @@ export async function uploadImageToSanity(
   const buffer = Buffer.from(await file.arrayBuffer());
 
   // Upload to Sanity assets
-  const asset = await client.assets.upload("image", buffer, {
+  const asset = await serverClient.assets.upload("image", buffer, {
     filename: file.name,
     contentType: file.type,
   });
@@ -48,7 +48,7 @@ export async function uploadMultipleImagesToSanity(
 
   const uploadPromises = files.map(async (file) => {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const asset = await client.assets.upload("image", buffer, {
+    const asset = await serverClient.assets.upload("image", buffer, {
       filename: file.name,
       contentType: file.type,
     });
@@ -67,7 +67,7 @@ export async function uploadMultipleImagesToSanity(
 
 export async function deleteImageFromSanity(assetId: string): Promise<void> {
   try {
-    await client.delete(assetId);
+    await serverClient.delete(assetId);
   } catch (error) {
     console.error("Failed to delete asset:", error);
     // Don't throw - the asset might be referenced elsewhere

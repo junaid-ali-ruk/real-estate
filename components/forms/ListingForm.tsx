@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { createListing, updateListing } from "@/actions/properties";
+import { listingSchema } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -50,32 +51,10 @@ const STATUS_OPTIONS = [
 import type { Amenity } from "@/types";
 export type { Amenity };
 
-const formSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters"),
-  description: z.string().min(20, "Description must be at least 20 characters"),
-  price: z.coerce.number().positive("Price must be positive"),
-  propertyType: z.enum(["house", "apartment", "condo", "townhouse", "land"]),
-  status: z.enum(["active", "pending", "sold"]).optional(),
-  bedrooms: z.coerce.number().min(0),
-  bathrooms: z.coerce.number().min(0),
-  squareFeet: z.coerce.number().min(0),
-  yearBuilt: z.coerce
-    .number()
-    .min(1800)
-    .max(new Date().getFullYear())
-    .optional(),
-  // Address fields are still stored but auto-filled from autocomplete
-  street: z.string().min(1, "Address is required"),
-  city: z.string().min(1, "City is required"),
-  state: z.string().min(1, "State is required"),
-  zipCode: z.string().min(1, "ZIP code is required"),
-  amenities: z.array(z.string()).optional(),
-});
-
 // Input type: what the form fields receive (strings from inputs)
-type FormDataInput = z.input<typeof formSchema>;
+type FormDataInput = z.input<typeof listingSchema>;
 // Output type: what validation produces (coerced to proper types)
-type FormDataOutput = z.output<typeof formSchema>;
+type FormDataOutput = z.output<typeof listingSchema>;
 
 interface ListingImage {
   asset: {
@@ -151,7 +130,7 @@ export function ListingForm({
     useState(initialAddressValue);
 
   const form = useForm<FormDataInput, unknown, FormDataOutput>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(listingSchema),
     defaultValues: {
       title: listing?.title || "",
       description: listing?.description || "",

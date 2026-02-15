@@ -9,18 +9,20 @@ type KPICardProps = {
 
 export function KPICard({ title, value, icon: Icon, color }: KPICardProps) {
   return (
-    <div className="bg-background rounded-2xl border border-border/50 p-6 shadow-warm">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-background rounded-none border border-border p-8 shadow-editorial transition-transform hover:-translate-y-1">
+      <div className="flex items-center justify-between mb-8">
         <div
-          className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorVariants[color]}`}
+          className={`w-10 h-10 border border-primary/20 flex items-center justify-center ${colorVariants[color]}`}
         >
-          <Icon className="h-6 w-6" aria-hidden="true" />
+          <Icon className="h-5 w-5" aria-hidden="true" />
         </div>
+        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Stats</div>
       </div>
-      <div className="text-3xl font-bold font-heading tabular-nums">
+      <div className="text-4xl font-heading font-bold tracking-tighter tabular-nums mb-1">
         {value}
       </div>
-      <p className="text-sm text-muted-foreground mt-1">{title}</p>
+      <div className="h-px w-8 bg-primary mb-4" />
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">{title}</p>
     </div>
   );
 }

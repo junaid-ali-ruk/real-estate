@@ -42,7 +42,7 @@ export default function PricingPage() {
       </div>
 
       {/* Clerk Pricing Table */}
-      <section className="max-w-md mx-auto" aria-label="Subscribe">
+      <section className="max-w-6xl mx-auto px-4" aria-label="Subscribe">
         <PricingTable />
       </section>
     </main>

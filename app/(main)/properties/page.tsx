@@ -131,36 +131,41 @@ export default async function PropertiesPage({
     params.amenities;
 
   return (
-    <div className="min-h-screen bg-accent/20">
-      {/* Header */}
-      <div className="bg-background border-b border-border/50">
-        <div className="container py-8">
+    <div className="min-h-screen bg-background">
+      {/* Header - Editorial Style */}
+      <div className="border-b border-border bg-card/50">
+        <div className="container py-16 md:py-24">
           <nav
-            className="flex items-center gap-2 text-sm text-muted-foreground mb-4"
+            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-8"
             aria-label="Breadcrumb"
           >
-            <Link href="/" className="hover:text-foreground transition-colors">
-              Home
+            <Link href="/" className="hover:text-primary transition-colors">
+              Archives
             </Link>
-            <ChevronRight className="h-4 w-4" aria-hidden="true" />
-            <span className="text-foreground font-medium">Properties</span>
+            <ChevronRight className="h-3 w-3" aria-hidden="true" />
+            <span className="text-foreground italic font-light">The Collection</span>
           </nav>
-          <h1 className="text-3xl md:text-4xl font-bold font-heading">
-            Browse Properties
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Find your perfect nest from our curated selection
-          </p>
+          <div className="max-w-3xl">
+            <h1 className="text-display text-4xl md:text-7xl mb-6">
+              EXAMINE <br /> COLLECTION
+            </h1>
+            <p className="text-editorial text-muted-foreground">
+              Explore our meticulously curated selection of architectural legacies and contemporary residences.
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="container py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
+      <div className="container py-16">
+        <div className="flex flex-col lg:flex-row gap-16">
+          {/* Sidebar - Sharp Editorial */}
           <aside className="lg:w-80 flex-shrink-0">
-            <div className="lg:sticky lg:top-24">
+            <div className="lg:sticky lg:top-32">
+              <div className="mb-8 pb-4 border-b border-border">
+                 <h2 className="text-xs font-bold uppercase tracking-widest text-primary">Refinement</h2>
+              </div>
               <Suspense
-                fallback={<Skeleton className="h-[500px] w-full rounded-2xl" />}
+                fallback={<Skeleton className="h-[500px] w-full rounded-none" />}
               >
                 <FilterSidebar amenities={amenities || []} />
               </Suspense>
@@ -169,38 +174,31 @@ export default async function PropertiesPage({
 
           {/* Main Content */}
           <div className="flex-1 min-w-0">
-            {/* Results Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <div>
-                <p className="text-lg font-medium">
-                  <span className="tabular-nums">{totalCount || 0}</span>{" "}
-                  {totalCount === 1 ? "property" : "properties"} found
-                </p>
-                {hasFilters && (
-                  <p className="text-sm text-muted-foreground">
-                    Showing filtered results
-                  </p>
-                )}
-              </div>
-            </div>
-
             <Tabs defaultValue="list" className="w-full">
-              <TabsList className="mb-6 bg-background border border-border/50 p-1 rounded-xl">
-                <TabsTrigger
-                  value="list"
-                  className="flex items-center gap-2 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
-                  <LayoutGrid className="h-4 w-4" aria-hidden="true" />
-                  Grid View
-                </TabsTrigger>
-                <TabsTrigger
-                  value="map"
-                  className="flex items-center gap-2 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
-                  <MapIcon className="h-4 w-4" aria-hidden="true" />
-                  Map View
-                </TabsTrigger>
-              </TabsList>
+              {/* Results Header */}
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-6 mb-12 pb-6 border-b border-border">
+                <div>
+                  <p className="text-xl font-heading italic">
+                    <span className="tabular-nums font-bold">{totalCount || 0}</span>{" "}
+                    Discoveries
+                  </p>
+                </div>
+
+                <TabsList className="bg-transparent border border-border p-0 rounded-none h-10">
+                  <TabsTrigger
+                    value="list"
+                    className="flex items-center gap-2 rounded-none px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground h-full text-[10px] font-bold uppercase tracking-widest"
+                  >
+                    Gallery
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="map"
+                    className="flex items-center gap-2 rounded-none px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground h-full text-[10px] font-bold uppercase tracking-widest"
+                  >
+                    Cartography
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
               <TabsContent value="list" className="mt-0">
                 {properties && properties.length > 0 ? (

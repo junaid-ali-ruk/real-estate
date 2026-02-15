@@ -21,7 +21,7 @@ export interface GeoPoint {
 }
 
 export interface SanityImage {
-  asset: {
+  asset?: {
     _id: string;
     url: string;
     metadata?: {

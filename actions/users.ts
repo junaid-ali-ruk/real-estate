@@ -2,7 +2,7 @@
 
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { client } from "@/lib/sanity/client";
+import { serverClient } from "@/lib/sanity/server";
 import { sanityFetch } from "@/lib/sanity/live";
 import {
   AGENT_BY_USER_ID_QUERY,
@@ -29,7 +29,7 @@ export async function completeUserOnboarding(data: UserOnboardingData) {
 
   if (existingUser) {
     // Update existing user
-    await client
+    await serverClient
       .patch(existingUser._id)
       .set({
         name: data.name,
@@ -38,7 +38,7 @@ export async function completeUserOnboarding(data: UserOnboardingData) {
       .commit();
   } else {
     // Create new user document
-    await client.create({
+    await serverClient.create({
       _type: "user",
       clerkId: userId,
       name: data.name,
@@ -74,7 +74,7 @@ export async function updateUserProfile(data: UserProfileData) {
     throw new Error("User not found");
   }
 
-  await client
+  await serverClient
     .patch(user._id)
     .set({
       name: data.name,
@@ -119,7 +119,7 @@ async function ensureOnboardingCompleteForSave(userId: string) {
   if (agent) {
     // Agent exists but no user record - create a user record for them
     // so they can use savedListings feature
-    const newUser = await client.create({
+    const newUser = await serverClient.create({
       _type: "user",
       clerkId: userId,
       name: agent.name,
@@ -160,13 +160,13 @@ export async function toggleSavedListing(
 
   if (isSaved) {
     // Remove from saved
-    await client
+    await serverClient
       .patch(user._id)
       .unset([`savedListings[_ref == "${propertyId}"]`])
       .commit();
   } else {
     // Add to saved
-    await client
+    await serverClient
       .patch(user._id)
       .setIfMissing({ savedListings: [] })
       .append("savedListings", [{ _type: "reference", _ref: propertyId }])

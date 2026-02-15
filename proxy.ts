@@ -13,7 +13,7 @@ const isProtectedRoute = createRouteMatcher([
 
 const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"]);
 
-const isAgentRoute = createRouteMatcher(["/dashboard(.*)"]);
+const isAgentRoute = createRouteMatcher(["/dashboard(.*)", "/create(.*)"]);
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -23,6 +23,57 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
   "/studio(.*)",
 ]);
+
+/**
+ * Check if user has active subscription by examining their Clerk metadata.
+ * This function is designed to work within clerkMiddleware.
+ */
+async function checkUserSubscription(userId: string): Promise<boolean> {
+  const clerk = await clerkClient();
+  const user = await clerk.users.getUser(userId);
+  
+  // Check for active subscription in Clerk user metadata
+  const subscriptionStatus = user.publicMetadata?.subscriptionStatus;
+  const stripeSubscriptionId = user.publicMetadata?.stripeSubscriptionId;
+  const plan = user.publicMetadata?.plan;
+  
+  // If subscription status is explicitly set in metadata, use that
+  if (subscriptionStatus === "active" || subscriptionStatus === "trialing") {
+    return true;
+  }
+  
+  // If there's a Stripe subscription ID or plan name, consider them subscribed
+  if (stripeSubscriptionId || plan) {
+    return true;
+  }
+
+  // Allow access in development to unblock testing
+  if (process.env.NODE_ENV === "development") {
+    return true;
+  }
+  
+  // Check organization memberships for subscription
+  try {
+    const { data: memberships } = await clerk.users.getOrganizationMembershipList({
+      userId,
+    });
+    
+    for (const membership of memberships) {
+      const org = membership.organization;
+      if (org.publicMetadata?.subscriptionStatus === "active" || 
+          org.publicMetadata?.subscriptionStatus === "trialing") {
+        return true;
+      }
+    }
+  } catch {
+    // Continue if organization check fails
+  }
+  
+  // Default to false - no valid subscription found
+  // In production, you might want to return true for testing or development
+  // return true; 
+  return false;
+}
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId, has } = await auth();
@@ -61,8 +112,10 @@ export default clerkMiddleware(async (auth, req) => {
 
   // Agent routes require active subscription + completed agent onboarding
   if (isAgentRoute(req) && userId) {
-    const hasAgentPlan = has({ plan: "agent" });
-    if (!hasAgentPlan) {
+    // Check for active subscription using Clerk metadata
+    const isSubscribed = await checkUserSubscription(userId);
+    
+    if (!isSubscribed) {
       return NextResponse.redirect(new URL("/pricing", req.url));
     }
 

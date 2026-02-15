@@ -21,7 +21,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatBadge } from "@/components/ui/stat-badge";
 import { sanityFetch } from "@/lib/sanity/live";
+
 import { PROPERTY_DETAIL_QUERY } from "@/lib/sanity/queries";
+import { urlFor } from "@/lib/sanity/image";
 
 export async function generateMetadata({
   params,
@@ -82,6 +84,28 @@ export default async function PropertyPage({
       ? property.status.charAt(0).toUpperCase() + property.status.slice(1)
       : null;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    name: property.title,
+    description: property.description,
+    image: property.images?.[0]?.asset ? urlFor(property.images[0]).url() : undefined,
+    offers: {
+      "@type": "Offer",
+      price: property.price,
+      priceCurrency: "USD",
+      availability: property.status === "active" ? "https://schema.org/InStock" : "https://schema.org/Sold",
+    },
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: property.address?.street,
+      addressLocality: property.address?.city,
+      addressRegion: property.address?.state,
+      postalCode: property.address?.zipCode,
+      addressCountry: "US",
+    },
+  };
+
   return (
     <div className="min-h-screen bg-accent/20">
       {/* Breadcrumb */}
@@ -108,6 +132,11 @@ export default async function PropertyPage({
           </nav>
         </div>
       </div>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       <div className="container py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

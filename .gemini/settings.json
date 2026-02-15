@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "browsermcp": {
+      "command": "bunx",
+      "args": [
+        "@browsermcp/mcp@latest"
+      ]
+    },
+    "Sanity": {
+      "url": "https://mcp.sanity.io",
+      "headers": {
+        "Authorization": "Bearer skIQ841Hlj9w9FsCfTptClXWbPjZLzBDkYWunVZLoKBdMUG4Nrcz1TL3txhLEJR5bTmDMXyv0o6qQl48iD3OUOcUUqHk7PQzJL5zPTc5s1gaBhSnLmYhyB2MWyxqxWoebVavc4STPneIS10U7OvFmmeYpdngbGAJlfimqCeQIovdykFEXJeQ"
+      }
+    }
+  }
+}

@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     "houses",
     "apartments",
   ],
+  alternates: {
+    canonical: "./",
+  },
   authors: [{ name: "Nestwell" }],
   creator: "Nestwell",
   metadataBase: new URL(
@@ -54,12 +57,21 @@ export const metadata: Metadata = {
     title: "Nestwell | Find Your Perfect Home",
     description:
       "Making your first home journey simple and stress-free. Browse properties, save favorites, and connect with trusted agents.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Nestwell - Find Your Perfect Home",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Nestwell | Find Your Perfect Home",
     description:
       "Making your first home journey simple and stress-free. Browse properties, save favorites, and connect with trusted agents.",
+    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,
@@ -83,7 +95,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
         <head>
           {/* Preconnect to external domains for performance */}
           <link rel="preconnect" href="https://cdn.sanity.io" />
