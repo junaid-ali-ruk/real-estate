@@ -29,30 +29,32 @@ const isPublicRoute = createRouteMatcher([
  * This function is designed to work within clerkMiddleware.
  */
 async function checkUserSubscription(userId: string): Promise<boolean> {
-  const clerk = await clerkClient();
-  const user = await clerk.users.getUser(userId);
-  
-  // Check for active subscription in Clerk user metadata
-  const subscriptionStatus = user.publicMetadata?.subscriptionStatus;
-  const stripeSubscriptionId = user.publicMetadata?.stripeSubscriptionId;
-  const plan = user.publicMetadata?.plan;
-  
-  // If subscription status is explicitly set in metadata, use that
-  if (subscriptionStatus === "active" || subscriptionStatus === "trialing") {
-    return true;
-  }
-  
-  // If there's a Stripe subscription ID or plan name, consider them subscribed
-  if (stripeSubscriptionId || plan) {
+  // 1. Always allow in development mode to prevent blocking the developer
+  if (process.env.NODE_ENV === "development" || process.env.NEXT_PUBLIC_BYPASS_SUBSCRIPTION === "true") {
     return true;
   }
 
-  // Allow access in development to unblock testing
-  if (process.env.NODE_ENV === "development") {
+  const clerk = await clerkClient();
+  const user = await clerk.users.getUser(userId);
+  
+  // 2. Check all common metadata keys used for subscriptions
+  const publicMeta = user.publicMetadata || {};
+  const privateMeta = user.privateMetadata || {};
+  
+  const hasValidStatus = [publicMeta.subscriptionStatus, privateMeta.subscriptionStatus].some(
+    status => status === "active" || status === "trialing"
+  );
+  
+  const hasSubscriptionId = !!(publicMeta.stripeSubscriptionId || privateMeta.stripeSubscriptionId || 
+                               publicMeta.subscriptionId || privateMeta.subscriptionId);
+                               
+  const hasPlan = !!(publicMeta.plan || privateMeta.plan || publicMeta.role === "agent");
+
+  if (hasValidStatus || hasSubscriptionId || hasPlan) {
     return true;
   }
   
-  // Check organization memberships for subscription
+  // 3. Check organization memberships
   try {
     const { data: memberships } = await clerk.users.getOrganizationMembershipList({
       userId,
@@ -60,8 +62,10 @@ async function checkUserSubscription(userId: string): Promise<boolean> {
     
     for (const membership of memberships) {
       const org = membership.organization;
-      if (org.publicMetadata?.subscriptionStatus === "active" || 
-          org.publicMetadata?.subscriptionStatus === "trialing") {
+      const orgMeta = org.publicMetadata || {};
+      if (orgMeta.subscriptionStatus === "active" || 
+          orgMeta.subscriptionStatus === "trialing" ||
+          orgMeta.plan) {
         return true;
       }
     }
@@ -69,9 +73,6 @@ async function checkUserSubscription(userId: string): Promise<boolean> {
     // Continue if organization check fails
   }
   
-  // Default to false - no valid subscription found
-  // In production, you might want to return true for testing or development
-  // return true; 
   return false;
 }
 

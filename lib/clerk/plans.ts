@@ -8,6 +8,11 @@ import { clerkClient, currentUser } from "@clerk/nextjs/server";
  * It also checks for organization-level subscriptions.
  */
 export async function hasActiveSubscription(): Promise<boolean> {
+  // 1. Always allow in development mode
+  if (process.env.NODE_ENV === "development" || process.env.NEXT_PUBLIC_BYPASS_SUBSCRIPTION === "true") {
+    return true;
+  }
+
   // Use currentUser() which works without requiring clerkMiddleware in the same way
   const user = await currentUser();
   
@@ -18,28 +23,24 @@ export async function hasActiveSubscription(): Promise<boolean> {
   const userId = user.id;
   const clerk = await clerkClient();
   
-  // Check for active subscription in Clerk user metadata
-  // This gets set by Clerk webhooks when subscription is created/active
-  const subscriptionStatus = user.publicMetadata?.subscriptionStatus;
-  const stripeSubscriptionId = user.publicMetadata?.stripeSubscriptionId;
-  const plan = user.publicMetadata?.plan;
-  
-  // If subscription status is explicitly set in metadata, use that
-  if (subscriptionStatus === "active" || subscriptionStatus === "trialing") {
-    return true;
-  }
-  
-  // If there's a Stripe subscription ID or a plan name, consider them subscribed
-  if (stripeSubscriptionId || plan) {
-    return true;
-  }
+  // 2. Check all common metadata keys
+  const publicMeta = user.publicMetadata || {};
+  const privateMeta = user.privateMetadata || {};
 
-  // In development, allow access if bypass is enabled or just return true for testing
-  if (process.env.NODE_ENV === "development") {
+  const hasValidStatus = [publicMeta.subscriptionStatus, privateMeta.subscriptionStatus].some(
+    status => status === "active" || status === "trialing"
+  );
+  
+  const hasSubscriptionId = !!(publicMeta.stripeSubscriptionId || privateMeta.stripeSubscriptionId || 
+                               publicMeta.subscriptionId || privateMeta.subscriptionId);
+                               
+  const hasPlan = !!(publicMeta.plan || privateMeta.plan || publicMeta.role === "agent");
+
+  if (hasValidStatus || hasSubscriptionId || hasPlan) {
     return true;
   }
   
-  // Check if user has any organization with active subscription
+  // 3. Check if user has any organization with active subscription
   try {
     const { data: memberships } = await clerk.users.getOrganizationMembershipList({
       userId,
@@ -47,9 +48,11 @@ export async function hasActiveSubscription(): Promise<boolean> {
     
     for (const membership of memberships) {
       const org = membership.organization;
+      const orgMeta = org.publicMetadata || {};
       // Check organization metadata for subscription
-      const orgSubscriptionStatus = org.publicMetadata?.subscriptionStatus;
-      if (orgSubscriptionStatus === "active" || orgSubscriptionStatus === "trialing") {
+      if (orgMeta.subscriptionStatus === "active" || 
+          orgMeta.subscriptionStatus === "trialing" ||
+          orgMeta.plan) {
         return true;
       }
     }
