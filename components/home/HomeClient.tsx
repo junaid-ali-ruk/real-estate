@@ -447,8 +447,8 @@ export function HomeClient({ featuredProperties }: { featuredProperties: any[] }
                   Whether you are liquidating a premium asset or searching for your next architectural legacy, our team is ready to advise.
                 </p>
                 <div className="flex flex-col gap-4">
-                  <Link href="/pricing" className="group flex items-center justify-between p-6 border border-primary-foreground/20 hover:bg-primary-foreground hover:text-primary transition-all duration-300">
-                    <span className="text-lg font-heading font-bold uppercase">Apply to Partner</span>
+                  <Link href="/create" className="group flex items-center justify-between p-6 border border-primary-foreground/20 hover:bg-primary-foreground hover:text-primary transition-all duration-300">
+                    <span className="text-lg font-heading font-bold uppercase">Register New Asset</span>
                     <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform" />
                   </Link>
                   <Link href="/properties" className="group flex items-center justify-between p-6 border border-primary-foreground/20 hover:bg-primary-foreground hover:text-primary transition-all duration-300">

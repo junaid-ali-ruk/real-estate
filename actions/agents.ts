@@ -2,7 +2,7 @@
 
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { hasAgentPlan } from "@/lib/clerk/plans";
+import { hasActiveSubscription } from "@/lib/clerk/server";
 import { serverClient } from "@/lib/sanity/server";
 import { sanityFetch } from "@/lib/sanity/live";
 import {
@@ -22,8 +22,9 @@ export async function createAgentDocument() {
     throw new Error("Not authenticated");
   }
 
-  // Verify user has agent plan
-  if (!hasAgentPlan(has)) {
+  // Verify user has agent plan using shared logic
+  const isSubscribed = await hasActiveSubscription(has);
+  if (!isSubscribed) {
     throw new Error("User does not have agent plan");
   }
 
