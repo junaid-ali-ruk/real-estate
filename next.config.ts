@@ -3,12 +3,13 @@ import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline';
-  style-src 'self' 'unsafe-inline';
-  img-src 'self' blob: data: https://cdn.sanity.io;
-  font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com;
-  connect-src 'self' https://api.mapbox.com https://*.sanity.io https://*.clerk.accounts.dev;
-  frame-src 'self' https://*.clerk.accounts.dev;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.clerk.accounts.dev https://*.clerk.com;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  img-src 'self' blob: data: https://cdn.sanity.io https://img.clerk.com https://*.mapbox.com;
+  font-src 'self' https://fonts.gstatic.com;
+  connect-src 'self' https://api.mapbox.com https://*.sanity.io https://*.clerk.accounts.dev https://clerk.nestwell.com;
+  frame-src 'self' https://*.clerk.accounts.dev https://*.clerk.com;
+  worker-src 'self' blob:;
 `;
 
 const nextConfig: NextConfig = {
@@ -18,6 +19,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "cdn.sanity.io",
+      },
+      {
+        protocol: "https",
+        hostname: "img.clerk.com",
       },
     ],
   },
@@ -31,7 +36,7 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            value: "camera=(), microphone=(), geolocation=(self)",
           },
           {
             key: "Content-Security-Policy",
