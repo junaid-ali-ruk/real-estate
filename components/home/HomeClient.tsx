@@ -108,22 +108,27 @@ export function HomeClient({
                 </span>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="relative">
-                <h1 className="text-[13vw] lg:text-[10vw] font-heading font-black leading-[0.7] tracking-[-0.06em] uppercase mb-20">
-                  <motion.span style={{ x: textX1 }} className="block">
-                    Bespoke
-                  </motion.span>
-                  <motion.span className="block italic font-light ml-[12%] text-stroke py-6">
-                    Living
-                  </motion.span>
-                  <motion.span
-                    style={{ x: textX2 }}
-                    className="block text-primary"
-                  >
-                    Refined
-                  </motion.span>
-                </h1>
-              </motion.div>
+                            <motion.div variants={itemVariants} className="relative">
+                              <h1 className="text-[13vw] lg:text-[10vw] font-heading font-black leading-[0.9] tracking-[-0.06em] uppercase mb-20">
+                                <motion.span 
+                                  style={{ x: textX1 }}
+                                  className="block"
+                                >
+                                  Bespoke
+                                </motion.span>
+                                <motion.span 
+                                  className="block italic font-light ml-[12%] text-stroke py-4 opacity-80"
+                                >
+                                  Living
+                                </motion.span>
+                                <motion.span 
+                                  style={{ x: textX2 }}
+                                  className="block text-primary"
+                                >
+                                  Refined
+                                </motion.span>
+                              </h1>
+                            </motion.div>
 
               <motion.div variants={itemVariants} className="max-w-2xl mt-16">
                 <div className="relative pl-16">
