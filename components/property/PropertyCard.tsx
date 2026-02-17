@@ -4,7 +4,7 @@ import { Bath, Bed, Heart, MapPin, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { urlFor } from "@/lib/sanity/image";
+import { urlFor, urlForWithPlaceholder } from "@/lib/sanity/image";
 import type { Property } from "@/types";
 
 interface PropertyCardProps {
@@ -41,23 +41,29 @@ export function PropertyCard({
       ? property.status.charAt(0).toUpperCase() + property.status.slice(1)
       : null;
 
+  const imageData = property.image ? urlForWithPlaceholder(property.image) : null;
+
   return (
     <div className="group animate-in fade-in zoom-in duration-500 fill-mode-both">
-      <Link href={`/properties/${property._id}`} className="block h-full">
+      <Link href={`/properties/${property.slug}`} className="block h-full">
         <article className="bg-background overflow-hidden h-full flex flex-col">
           {/* Image Container */}
           <div className="relative aspect-[4/5] overflow-hidden border border-border group-hover:border-primary transition-colors duration-300">
-            {property.image?.asset ? (
+            {imageData ? (
               <Image
-                src={urlFor(property.image).width(800).height(1000).url()}
+                src={urlFor(property.image!).width(800).height(1000).url()}
                 alt={property.title}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105 grayscale-[0.2] group-hover:grayscale-0"
+                placeholder={imageData.placeholder}
+                blurDataURL={imageData.blurDataURL}
               />
             ) : (
               <div className="w-full h-full bg-secondary flex items-center justify-center">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Image Pending</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  Image Pending
+                </span>
               </div>
             )}
 
@@ -82,9 +88,7 @@ export function PropertyCard({
               >
                 <Heart
                   className={`h-4 w-4 transition-transform active:scale-90 ${
-                    isSaved
-                      ? "fill-current text-destructive"
-                      : "text-current"
+                    isSaved ? "fill-current text-destructive" : "text-current"
                   }`}
                   aria-hidden="true"
                 />
@@ -94,9 +98,9 @@ export function PropertyCard({
             {/* Status Badge */}
             {statusLabel && (
               <div className="absolute top-3 left-3 bg-primary/90 backdrop-blur-sm px-2 py-1 z-20 shadow-sm">
-                 <span className="text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
-                    {statusLabel}
-                 </span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
+                  {statusLabel}
+                </span>
               </div>
             )}
           </div>
@@ -120,10 +124,16 @@ export function PropertyCard({
 
             <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
               <div className="flex gap-3">
-                 <span className="flex items-center gap-1.5"><Bed className="h-3 w-3" /> {property.bedrooms}</span>
-                 <span className="flex items-center gap-1.5"><Bath className="h-3 w-3" /> {property.bathrooms}</span>
+                <span className="flex items-center gap-1.5">
+                  <Bed className="h-3 w-3" /> {property.bedrooms}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Bath className="h-3 w-3" /> {property.bathrooms}
+                </span>
               </div>
-              <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {property.address?.city}</span>
+              <span className="flex items-center gap-1">
+                <MapPin className="h-3 w-3" /> {property.address?.city}
+              </span>
             </div>
           </div>
         </article>

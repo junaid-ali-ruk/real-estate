@@ -10,6 +10,7 @@ import { GripVertical, ImagePlus, Loader2, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { logger } from "@/lib/logger";
 import { uploadImageToSanity } from "@/lib/sanity/upload";
 import { cn } from "@/lib/utils";
 
@@ -85,7 +86,7 @@ export function ImageUpload({
           })),
         ]);
       } catch (error) {
-        console.error("Upload failed:", error);
+        logger.error("Upload failed", { error });
         // Remove placeholders on error
         onChange(images);
       } finally {

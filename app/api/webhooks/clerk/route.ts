@@ -1,6 +1,7 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -8,7 +9,7 @@ export async function POST(req: Request) {
 
   if (!WEBHOOK_SECRET) {
     throw new Error(
-      "Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
+      "Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local",
     );
   }
 
@@ -42,7 +43,7 @@ export async function POST(req: Request) {
       "svix-signature": svix_signature,
     }) as WebhookEvent;
   } catch (err) {
-    console.error("Error verifying webhook:", err);
+    logger.error("Error verifying webhook", { error: err });
     return new Response("Error occured", {
       status: 400,
     });
@@ -51,9 +52,8 @@ export async function POST(req: Request) {
   // Do something with the payload
   // For this application, we mainly care about user updates or subscription events
   const eventType = evt.type;
-  
-  console.log(`Webhook with and ID of ${evt.data.id} and type of ${eventType}`);
-  console.log("Webhook body:", body);
+
+  logger.info(`Webhook received`, { id: evt.data.id, type: eventType });
 
   if (eventType === "user.updated") {
     // Logic to sync with local DB if needed, or just acknowledge

@@ -2,8 +2,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Home,
-  LayoutGrid,
-  Map as MapIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -143,14 +141,17 @@ export default async function PropertiesPage({
               Archives
             </Link>
             <ChevronRight className="h-3 w-3" aria-hidden="true" />
-            <span className="text-foreground italic font-light">The Collection</span>
+            <span className="text-foreground italic font-light">
+              The Collection
+            </span>
           </nav>
           <div className="max-w-3xl">
             <h1 className="text-display text-4xl md:text-7xl mb-6">
               EXAMINE <br /> COLLECTION
             </h1>
             <p className="text-editorial text-muted-foreground">
-              Explore our meticulously curated selection of architectural legacies and contemporary residences.
+              Explore our meticulously curated selection of architectural
+              legacies and contemporary residences.
             </p>
           </div>
         </div>
@@ -162,10 +163,14 @@ export default async function PropertiesPage({
           <aside className="lg:w-80 flex-shrink-0">
             <div className="lg:sticky lg:top-32">
               <div className="mb-8 pb-4 border-b border-border">
-                 <h2 className="text-xs font-bold uppercase tracking-widest text-primary">Refinement</h2>
+                <h2 className="text-xs font-bold uppercase tracking-widest text-primary">
+                  Refinement
+                </h2>
               </div>
               <Suspense
-                fallback={<Skeleton className="h-[500px] w-full rounded-none" />}
+                fallback={
+                  <Skeleton className="h-[500px] w-full rounded-none" />
+                }
               >
                 <FilterSidebar amenities={amenities || []} />
               </Suspense>
@@ -179,7 +184,9 @@ export default async function PropertiesPage({
               <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-6 mb-12 pb-6 border-b border-border">
                 <div>
                   <p className="text-xl font-heading italic">
-                    <span className="tabular-nums font-bold">{totalCount || 0}</span>{" "}
+                    <span className="tabular-nums font-bold">
+                      {totalCount || 0}
+                    </span>{" "}
                     Discoveries
                   </p>
                 </div>

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { urlFor } from "@/lib/sanity/image";
+import { urlFor, urlForWithPlaceholder } from "@/lib/sanity/image";
 import type { SanityImage } from "@/types";
 
 interface ImageGalleryProps {
@@ -13,7 +13,10 @@ interface ImageGalleryProps {
   title: string;
 }
 
-export function ImageGallery({ images: initialImages, title }: ImageGalleryProps) {
+export function ImageGallery({
+  images: initialImages,
+  title,
+}: ImageGalleryProps) {
   const images = initialImages.filter((img) => img.asset);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -59,6 +62,8 @@ export function ImageGallery({ images: initialImages, title }: ImageGalleryProps
     );
   }
 
+  const mainImageData = urlForWithPlaceholder(images[selectedIndex]);
+
   return (
     <>
       <section
@@ -82,6 +87,8 @@ export function ImageGallery({ images: initialImages, title }: ImageGalleryProps
               sizes="(max-width: 1024px) 100vw, 66vw"
               className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
               priority
+              placeholder={mainImageData.placeholder}
+              blurDataURL={mainImageData.blurDataURL}
             />
             {/* Hover Overlay */}
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-[background-color] duration-300 flex items-center justify-center">
@@ -135,29 +142,34 @@ export function ImageGallery({ images: initialImages, title }: ImageGalleryProps
             role="listbox"
             aria-label="Image thumbnails"
           >
-            {images.map((image, index) => (
-              <button
-                key={image.asset?._id || index}
-                type="button"
-                onClick={() => setSelectedIndex(index)}
-                role="option"
-                aria-selected={index === selectedIndex}
-                aria-label={`View image ${index + 1} of ${images.length}`}
-                className={`relative flex-shrink-0 w-28 h-20 rounded-xl overflow-hidden border-2 transition-[border-color,transform,box-shadow] duration-200 ${
-                  index === selectedIndex
-                    ? "border-primary shadow-warm scale-105"
-                    : "border-transparent hover:border-primary/50 hover:shadow-warm"
-                }`}
-              >
-                <Image
-                  src={urlFor(image).width(112).height(80).url()}
-                  alt={image.alt || `${title} - Image ${index + 1}`}
-                  fill
-                  sizes="112px"
-                  className="object-cover"
-                />
-              </button>
-            ))}
+            {images.map((image, index) => {
+              const thumbImageData = urlForWithPlaceholder(image);
+              return (
+                <button
+                  key={image.asset?._id || index}
+                  type="button"
+                  onClick={() => setSelectedIndex(index)}
+                  role="option"
+                  aria-selected={index === selectedIndex}
+                  aria-label={`View image ${index + 1} of ${images.length}`}
+                  className={`relative flex-shrink-0 w-28 h-20 rounded-xl overflow-hidden border-2 transition-[border-color,transform,box-shadow] duration-200 ${
+                    index === selectedIndex
+                      ? "border-primary shadow-warm scale-105"
+                      : "border-transparent hover:border-primary/50 hover:shadow-warm"
+                  }`}
+                >
+                  <Image
+                    src={urlFor(image).width(112).height(80).url()}
+                    alt={image.alt || `${title} - Image ${index + 1}`}
+                    fill
+                    sizes="112px"
+                    className="object-cover"
+                    placeholder={thumbImageData.placeholder}
+                    blurDataURL={thumbImageData.blurDataURL}
+                  />
+                </button>
+              );
+            })}
           </div>
         )}
       </section>
@@ -166,7 +178,8 @@ export function ImageGallery({ images: initialImages, title }: ImageGalleryProps
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent className="max-w-6xl p-0 bg-black/95 border-none overscroll-contain">
           <DialogTitle className="sr-only">
-            Image gallery: {title} — image {selectedIndex + 1} of {images.length}
+            Image gallery: {title} — image {selectedIndex + 1} of{" "}
+            {images.length}
           </DialogTitle>
           <section
             className="relative aspect-[16/9]"
@@ -179,6 +192,8 @@ export function ImageGallery({ images: initialImages, title }: ImageGalleryProps
               fill
               sizes="100vw"
               className="object-contain"
+              placeholder={mainImageData.placeholder}
+              blurDataURL={mainImageData.blurDataURL}
             />
 
             {/* Navigation */}

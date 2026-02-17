@@ -85,6 +85,36 @@ export const PROPERTIES_COUNT_QUERY = defineQuery(/* groq */ `
   ])
 `);
 
+// Single property by slug
+export const PROPERTY_BY_SLUG_QUERY = defineQuery(/* groq */ `
+  *[_type == "property" && slug.current == $slug][0] {
+    _id,
+    title,
+    description,
+    price,
+    propertyType,
+    status,
+    bedrooms,
+    bathrooms,
+    squareFeet,
+    yearBuilt,
+    address,
+    location,
+    images[] { ${imageFragment} },
+    amenities,
+    agent-> {
+      _id,
+      userId,
+      name,
+      email,
+      phone,
+      photo { ${imageFragment} },
+      bio,
+      agency
+    }
+  }
+`);
+
 // Single property with agent details
 export const PROPERTY_DETAIL_QUERY = defineQuery(/* groq */ `
   *[_type == "property" && _id == $id][0] {

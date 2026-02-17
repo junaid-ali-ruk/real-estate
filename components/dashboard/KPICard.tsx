@@ -16,13 +16,17 @@ export function KPICard({ title, value, icon: Icon, color }: KPICardProps) {
         >
           <Icon className="h-5 w-5" aria-hidden="true" />
         </div>
-        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Stats</div>
+        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+          Stats
+        </div>
       </div>
       <div className="text-4xl font-heading font-bold tracking-tighter tabular-nums mb-1">
         {value}
       </div>
       <div className="h-px w-8 bg-primary mb-4" />
-      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">{title}</p>
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+        {title}
+      </p>
     </div>
   );
 }

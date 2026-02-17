@@ -22,18 +22,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatBadge } from "@/components/ui/stat-badge";
 import { sanityFetch } from "@/lib/sanity/live";
 
-import { PROPERTY_DETAIL_QUERY } from "@/lib/sanity/queries";
+import { PROPERTY_BY_SLUG_QUERY } from "@/lib/sanity/queries";
 import { urlFor } from "@/lib/sanity/image";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { id } = await params;
+  const { slug } = await params;
   const { data: property } = await sanityFetch({
-    query: PROPERTY_DETAIL_QUERY,
-    params: { id },
+    query: PROPERTY_BY_SLUG_QUERY,
+    params: { slug },
   });
 
   if (!property) {
@@ -57,19 +57,21 @@ export async function generateMetadata({
 export default async function PropertyPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { id } = await params;
+  const { slug } = await params;
   const { userId } = await auth();
 
   const { data: property } = await sanityFetch({
-    query: PROPERTY_DETAIL_QUERY,
-    params: { id },
+    query: PROPERTY_BY_SLUG_QUERY,
+    params: { slug },
   });
 
   if (!property) {
     notFound();
   }
+
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -89,12 +91,17 @@ export default async function PropertyPage({
     "@type": "RealEstateListing",
     name: property.title,
     description: property.description,
-    image: property.images?.[0]?.asset ? urlFor(property.images[0]).url() : undefined,
+    image: property.images?.[0]?.asset
+      ? urlFor(property.images[0]).url()
+      : undefined,
     offers: {
       "@type": "Offer",
       price: property.price,
       priceCurrency: "USD",
-      availability: property.status === "active" ? "https://schema.org/InStock" : "https://schema.org/Sold",
+      availability:
+        property.status === "active"
+          ? "https://schema.org/InStock"
+          : "https://schema.org/Sold",
     },
     address: {
       "@type": "PostalAddress",
@@ -104,6 +111,30 @@ export default async function PropertyPage({
       postalCode: property.address?.zipCode,
       addressCountry: "US",
     },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: baseUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Properties",
+        item: `${baseUrl}/properties`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: property.title,
+      },
+    ],
   };
 
   return (
@@ -135,7 +166,9 @@ export default async function PropertyPage({
 
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([jsonLd, breadcrumbJsonLd]),
+        }}
       />
 
       <div className="container py-8">
@@ -291,7 +324,7 @@ export default async function PropertyPage({
                       properties={[
                         {
                           ...property,
-                          slug: property.slug?.current || id,
+                          slug: property.slug?.current || slug,
                         },
                       ]}
                     />

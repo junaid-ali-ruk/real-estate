@@ -238,10 +238,9 @@ export async function deleteListing(listingId: string) {
 
   // Handle referential integrity
   // 1. Find all documents referencing this property
-  const referencingDocs = await serverClient.fetch<{ _id: string; _type: string }[]>(
-    `*[references($id)] { _id, _type }`,
-    { id: listingId }
-  );
+  const referencingDocs = await serverClient.fetch<
+    { _id: string; _type: string }[]
+  >(`*[references($id)] { _id, _type }`, { id: listingId });
 
   const transaction = serverClient.transaction();
 
@@ -252,7 +251,7 @@ export async function deleteListing(listingId: string) {
     } else if (doc._type === "user") {
       // Remove from user's saved listings
       transaction.patch(doc._id, (patch) =>
-        patch.unset([`savedListings[_ref == "${listingId}"]`])
+        patch.unset([`savedListings[_ref == "${listingId}"]`]),
       );
     }
   }

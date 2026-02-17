@@ -5,7 +5,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Nestwell | Bespoke Architecture & Refined Living",
-  description: "Experience the world's most distinctive luxury properties. Nestwell curates architectural legacies for those who view living as an art form.",
+  description:
+    "Experience the world's most distinctive luxury properties. Nestwell curates architectural legacies for those who view living as an art form.",
 };
 
 export default async function HomePage() {

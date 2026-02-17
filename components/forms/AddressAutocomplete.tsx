@@ -3,6 +3,7 @@
 import debounce from "lodash.debounce";
 import { CheckCircle2, Loader2, MapPin, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { logger } from "@/lib/logger";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -85,8 +86,7 @@ export function AddressAutocomplete({
     setIsLoading(true);
     try {
       const encodedQuery = encodeURIComponent(query);
-      // Focus on addresses with country filter for US
-      const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodedQuery}.json?access_token=${token}&types=address&limit=5&country=US`;
+      const url = `/api/geocode?address=${encodedQuery}&types=address`;
 
       const response = await fetch(url);
       if (!response.ok) throw new Error("Failed to fetch suggestions");
@@ -95,7 +95,7 @@ export function AddressAutocomplete({
       setSuggestions(data.features || []);
       setIsOpen(data.features?.length > 0);
     } catch (error) {
-      console.error("Autocomplete error:", error);
+      logger.error("Autocomplete error", { error });
       setSuggestions([]);
     } finally {
       setIsLoading(false);

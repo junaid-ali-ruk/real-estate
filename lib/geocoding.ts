@@ -3,6 +3,7 @@
  * Converts addresses to coordinates (lat/lng)
  */
 
+import { logger } from "@/lib/logger";
 import type {
   GeocodeFeature,
   GeocodeResponse,
@@ -30,7 +31,7 @@ export async function geocodeAddress(
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
   if (!token) {
-    console.error("Mapbox token not configured");
+    logger.error("Mapbox token not configured");
     return null;
   }
 
@@ -39,19 +40,17 @@ export async function geocodeAddress(
   }
 
   const encodedAddress = encodeURIComponent(address.trim());
-  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodedAddress}.json?access_token=${token}&limit=1`;
+  const url = `/api/geocode?address=${encodedAddress}`;
 
   try {
     const response = await fetch(url);
 
     if (!response.ok) {
-      if (response.status === 401) {
-        console.error("Invalid Mapbox token");
-      }
+      logger.error("Internal geocoding API error", { status: response.status });
       return null;
     }
 
-    const data: GeocodeResponse = await response.json();
+    const data = await response.json();
 
     if (!data.features || data.features.length === 0) {
       return null;
@@ -66,7 +65,7 @@ export async function geocodeAddress(
       formattedAddress: feature.place_name,
     };
   } catch (error) {
-    console.error("Geocoding error:", error);
+    logger.error("Geocoding error", { error, address: encodedAddress });
     return null;
   }
 }

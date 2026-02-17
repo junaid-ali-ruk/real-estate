@@ -8,9 +8,11 @@ import {
 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { sanityFetch } from "@/lib/sanity/live";
+import { createAgentDocument } from "@/actions/agents";
 import {
   AGENT_DASHBOARD_QUERY,
   DASHBOARD_LEADS_COUNT_QUERY,
@@ -24,13 +26,24 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  // Middleware guarantees: authenticated + has agent plan + onboarding complete
   const { userId } = await auth();
 
-  const { data: agent } = await sanityFetch({
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
+  let { data: agent } = await sanityFetch({
     query: AGENT_DASHBOARD_QUERY,
     params: { userId },
   });
+
+  if (!agent) {
+    agent = await createAgentDocument();
+    
+    if (!agent) {
+      throw new Error("Agent account could not be initialized.");
+    }
+  }
 
   // Get stats
   const [

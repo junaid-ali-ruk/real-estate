@@ -2,7 +2,6 @@
 
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { hasActiveSubscription } from "@/lib/clerk/server";
 import { serverClient } from "@/lib/sanity/server";
 import { sanityFetch } from "@/lib/sanity/live";
 import {
@@ -16,16 +15,10 @@ import type { AgentOnboardingData, AgentProfileData } from "@/types";
  * Called lazily when user first visits dashboard after subscribing.
  */
 export async function createAgentDocument() {
-  const { userId, has } = await auth();
+  const { userId } = await auth();
 
   if (!userId) {
     throw new Error("Not authenticated");
-  }
-
-  // Verify user has agent plan using shared logic
-  const isSubscribed = await hasActiveSubscription(has);
-  if (!isSubscribed) {
-    throw new Error("User does not have agent plan");
   }
 
   // Check if agent already exists

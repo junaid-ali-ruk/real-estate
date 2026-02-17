@@ -1,5 +1,6 @@
 "use server";
 
+import { logger } from "@/lib/logger";
 import { serverClient } from "./server";
 
 export interface UploadedImage {
@@ -69,7 +70,7 @@ export async function deleteImageFromSanity(assetId: string): Promise<void> {
   try {
     await serverClient.delete(assetId);
   } catch (error) {
-    console.error("Failed to delete asset:", error);
+    logger.error("Failed to delete asset", { error, assetId });
     // Don't throw - the asset might be referenced elsewhere
   }
 }

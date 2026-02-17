@@ -2,9 +2,7 @@
   "mcpServers": {
     "browsermcp": {
       "command": "bunx",
-      "args": [
-        "@browsermcp/mcp@latest"
-      ]
+      "args": ["@browsermcp/mcp@latest"]
     },
     "Sanity": {
       "url": "https://mcp.sanity.io",

@@ -1,6 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
+import { sanityFetch } from "@/lib/sanity/live";
+import { AGENT_ID_BY_USER_QUERY } from "@/lib/sanity/queries";
+import { createAgentDocument } from "@/actions/agents";
 
 export default async function DashboardLayout({
   children,
@@ -11,6 +14,16 @@ export default async function DashboardLayout({
 
   if (!userId) {
     redirect("/sign-in");
+  }
+
+  // Ensure agent document exists
+  const { data: agent } = await sanityFetch({
+    query: AGENT_ID_BY_USER_QUERY,
+    params: { userId },
+  });
+
+  if (!agent) {
+    await createAgentDocument();
   }
 
   return (

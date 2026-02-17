@@ -13,7 +13,7 @@ import {
   ANALYTICS_LISTINGS_SOLD_QUERY,
   ANALYTICS_LISTINGS_TOTAL_QUERY,
 } from "@/lib/sanity/queries";
-import { AnalyticsDashboard } from "./analytics-dashboard";
+import { AnalyticsDashboardWrapper } from "./analytics-wrapper";
 
 export const metadata: Metadata = {
   title: "Analytics",
@@ -40,7 +40,7 @@ export type AnalyticsData = {
 };
 
 export default async function AnalyticsPage() {
-  // Middleware guarantees: authenticated + has agent plan + onboarding complete
+  // Middleware guarantees: authenticated + onboarding complete
   const { userId } = await auth();
 
   const { data: agent } = await sanityFetch({
@@ -125,5 +125,5 @@ export default async function AnalyticsPage() {
     ),
   };
 
-  return <AnalyticsDashboard data={analyticsData} />;
+  return <AnalyticsDashboardWrapper data={analyticsData} />;
 }
