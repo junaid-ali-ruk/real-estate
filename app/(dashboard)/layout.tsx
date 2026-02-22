@@ -1,9 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { createAgentDocument } from "@/actions/agents";
+import { DashboardMobileHeader } from "@/components/layout/DashboardMobileHeader";
 import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
 import { sanityFetch } from "@/lib/sanity/live";
 import { AGENT_ID_BY_USER_QUERY } from "@/lib/sanity/queries";
-import { createAgentDocument } from "@/actions/agents";
 
 export default async function DashboardLayout({
   children,
@@ -27,9 +28,10 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-background border-l border-border">
-      <DashboardSidebar />
-      <main id="main" className="flex-1 p-12 max-w-7xl mx-auto">
+    <div className="flex min-h-[100dvh] bg-background border-l border-border flex-col md:flex-row w-full overflow-hidden">
+      <DashboardSidebar className="hidden md:block" />
+      <DashboardMobileHeader />
+      <main id="main" className="flex-1 p-4 md:p-12 max-w-7xl mx-auto w-full">
         {children}
       </main>
     </div>

@@ -1,8 +1,4 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-  Home,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Home } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";

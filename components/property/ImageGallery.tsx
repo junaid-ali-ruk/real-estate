@@ -110,26 +110,26 @@ export function ImageGallery({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-background/80 backdrop-blur-sm hover:bg-background shadow-warm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                className="absolute left-6 top-1/2 -translate-y-1/2 z-10 h-14 w-14 bg-black/40 backdrop-blur-md hover:bg-black/60 text-white border-none rounded-full shadow-xl transition-all duration-300 group-hover:scale-110 active:scale-95"
                 onClick={(e) => {
                   e.stopPropagation();
                   goToPrevious();
                 }}
                 aria-label="Previous image"
               >
-                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                <ChevronLeft className="h-8 w-8" aria-hidden="true" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-background/80 backdrop-blur-sm hover:bg-background shadow-warm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                className="absolute right-6 top-1/2 -translate-y-1/2 z-10 h-14 w-14 bg-black/40 backdrop-blur-md hover:bg-black/60 text-white border-none rounded-full shadow-xl transition-all duration-300 group-hover:scale-110 active:scale-95"
                 onClick={(e) => {
                   e.stopPropagation();
                   goToNext();
                 }}
                 aria-label="Next image"
               >
-                <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                <ChevronRight className="h-8 w-8" aria-hidden="true" />
               </Button>
             </>
           )}

@@ -1,11 +1,11 @@
-type LogLevel = 'info' | 'warn' | 'error';
+type LogLevel = "info" | "warn" | "error";
 
 interface LogDetails {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 class Logger {
-  private isProduction = process.env.NODE_ENV === 'production';
+  private isProduction = process.env.NODE_ENV === "production";
 
   private log(level: LogLevel, message: string, details?: LogDetails) {
     if (this.isProduction) {
@@ -20,35 +20,35 @@ class Logger {
         ...details,
       });
 
-      if (level === 'error') {
+      if (level === "error") {
         console.error(logEntry);
-      } else if (level === 'warn') {
+      } else if (level === "warn") {
         console.warn(logEntry);
       } else {
         console.info(logEntry);
       }
     } else {
       // In development, keep it readable
-      if (level === 'error') {
-        console.error(`[ERROR] ${message}`, details || '');
-      } else if (level === 'warn') {
-        console.warn(`[WARN] ${message}`, details || '');
+      if (level === "error") {
+        console.error(`[ERROR] ${message}`, details || "");
+      } else if (level === "warn") {
+        console.warn(`[WARN] ${message}`, details || "");
       } else {
-        console.log(`[INFO] ${message}`, details || '');
+        console.log(`[INFO] ${message}`, details || "");
       }
     }
   }
 
   info(message: string, details?: LogDetails) {
-    this.log('info', message, details);
+    this.log("info", message, details);
   }
 
   warn(message: string, details?: LogDetails) {
-    this.log('warn', message, details);
+    this.log("warn", message, details);
   }
 
   error(message: string, details?: LogDetails) {
-    this.log('error', message, details);
+    this.log("error", message, details);
   }
 }
 

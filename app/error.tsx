@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { logger } from "@/lib/logger";
 
@@ -14,10 +14,10 @@ export default function RootError({
 }) {
   useEffect(() => {
     // Log the error to our structured logger
-    logger.error("Application error", { 
-      message: error.message, 
+    logger.error("Application error", {
+      message: error.message,
       digest: error.digest,
-      stack: error.stack 
+      stack: error.stack,
     });
   }, [error]);
 
@@ -29,10 +29,13 @@ export default function RootError({
             System Error
           </div>
           <h1 className="text-5xl font-heading font-black uppercase tracking-tighter italic leading-none">
-            Architectural<br/>Dissonance
+            Architectural
+            <br />
+            Dissonance
           </h1>
           <p className="text-muted-foreground font-light italic text-lg leading-relaxed">
-            A structural anomaly has occurred in the digital framework. Our systems are recalibrating.
+            A structural anomaly has occurred in the digital framework. Our
+            systems are recalibrating.
           </p>
         </div>
 
@@ -53,7 +56,7 @@ export default function RootError({
             <Link href="/">Return to Entry</Link>
           </Button>
         </div>
-        
+
         <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] pt-8">
           Error Signature: {error.digest || "Unknown"}
         </p>

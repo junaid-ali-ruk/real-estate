@@ -52,11 +52,22 @@ const navItems = [
   },
 ];
 
-export function DashboardSidebar() {
+export function DashboardSidebar({
+  className,
+  onNavigate,
+}: {
+  className?: string;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-72 border-r border-border/50 bg-sidebar min-h-screen sticky top-0">
+    <aside
+      className={cn(
+        "w-72 border-r border-border/50 bg-sidebar min-h-[100dvh] sticky top-0 shrink-0",
+        className,
+      )}
+    >
       <div className="p-6">
         {/* Back Link */}
         <Link
@@ -99,11 +110,12 @@ export function DashboardSidebar() {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={onNavigate}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-none text-sm font-bold uppercase tracking-widest transition-all duration-200",
+                  "flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest transition-all duration-200 border-l-2",
                   isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent",
+                    ? "bg-primary/10 text-primary border-primary"
+                    : "text-muted-foreground border-transparent hover:text-foreground hover:bg-sidebar-accent",
                 )}
                 aria-current={isActive ? "page" : undefined}
               >

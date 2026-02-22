@@ -1,7 +1,6 @@
 "use server";
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { serverClient } from "@/lib/sanity/server";
 import { sanityFetch } from "@/lib/sanity/live";
 import {
   AGENT_BY_USER_ID_QUERY,
@@ -10,6 +9,7 @@ import {
   LEAD_EXISTS_QUERY,
   USER_CONTACT_QUERY,
 } from "@/lib/sanity/queries";
+import { serverClient } from "@/lib/sanity/server";
 
 /**
  * Ensures Clerk metadata is synced with Sanity state.

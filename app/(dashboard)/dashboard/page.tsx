@@ -9,10 +9,10 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { createAgentDocument } from "@/actions/agents";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { sanityFetch } from "@/lib/sanity/live";
-import { createAgentDocument } from "@/actions/agents";
 import {
   AGENT_DASHBOARD_QUERY,
   DASHBOARD_LEADS_COUNT_QUERY,
@@ -39,7 +39,7 @@ export default async function DashboardPage() {
 
   if (!agent) {
     agent = await createAgentDocument();
-    
+
     if (!agent) {
       throw new Error("Agent account could not be initialized.");
     }
@@ -93,7 +93,7 @@ export default async function DashboardPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Total Listings */}
-        <div className="bg-background rounded-2xl border border-border/50 p-6 shadow-warm">
+        <div className="bg-background rounded-2xl border border-border p-6 shadow-warm">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
               <Home className="h-6 w-6 text-primary" aria-hidden="true" />
@@ -111,11 +111,11 @@ export default async function DashboardPage() {
         </div>
 
         {/* Total Leads */}
-        <div className="bg-background rounded-2xl border border-border/50 p-6 shadow-warm">
+        <div className="bg-background rounded-2xl border border-border p-6 shadow-warm">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
               <MessageSquare
-                className="h-6 w-6 text-secondary"
+                className="h-6 w-6 text-blue-500"
                 aria-hidden="true"
               />
             </div>
@@ -130,10 +130,13 @@ export default async function DashboardPage() {
         </div>
 
         {/* New Leads */}
-        <div className="bg-background rounded-2xl border border-border/50 p-6 shadow-warm">
+        <div className="bg-background rounded-2xl border border-border p-6 shadow-warm">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center">
-              <TrendingUp className="h-6 w-6 text-success" aria-hidden="true" />
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+              <TrendingUp
+                className="h-6 w-6 text-emerald-500"
+                aria-hidden="true"
+              />
             </div>
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               New
@@ -188,9 +191,9 @@ export default async function DashboardPage() {
             >
               <Link href="/dashboard/listings">
                 <span className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
                     <Home
-                      className="h-5 w-5 text-secondary"
+                      className="h-5 w-5 text-emerald-500"
                       aria-hidden="true"
                     />
                   </div>
@@ -216,9 +219,9 @@ export default async function DashboardPage() {
             >
               <Link href="/dashboard/leads">
                 <span className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
                     <MessageSquare
-                      className="h-5 w-5 text-primary"
+                      className="h-5 w-5 text-blue-500"
                       aria-hidden="true"
                     />
                   </div>

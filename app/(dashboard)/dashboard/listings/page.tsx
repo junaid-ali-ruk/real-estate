@@ -109,9 +109,13 @@ export default async function ListingsPage() {
                       <div>
                         <Link
                           href={`/properties/${listing.slug}`}
-                          className="font-medium hover:underline"
+                          className="font-medium hover:underline block max-w-[300px] truncate"
+                          title={listing.title}
                         >
-                          {listing.title}
+                          {listing.title?.includes("Error:") ||
+                          listing.title?.includes("Uncaught")
+                            ? "Property Details Unavailable"
+                            : listing.title}
                         </Link>
                       </div>
                     </div>

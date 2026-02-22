@@ -1,12 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
+import type { z } from "zod";
 import { createListing, updateListing } from "@/actions/properties";
-import { listingSchema } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { listingSchema } from "@/lib/validations";
 import { AddressAutocomplete, type AddressResult } from "./AddressAutocomplete";
 import { type ImageItem, ImageUpload } from "./ImageUpload";
 import { LocationPicker } from "./LocationPicker";
@@ -99,6 +100,7 @@ export function ListingForm({
   amenities,
   mode = "create",
 }: ListingFormProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   // Initialize images from listing data
@@ -215,13 +217,20 @@ export function ListingForm({
         };
 
         if (mode === "edit" && listing) {
-          await updateListing(listing._id, formData);
-          toast.success("Listing updated successfully");
+          const res = await updateListing(listing._id, formData);
+          if (res?.success) {
+            toast.success("Listing updated successfully");
+            router.push("/dashboard/listings");
+          }
         } else {
-          await createListing(formData);
-          toast.success("Listing created successfully");
+          const res = await createListing(formData);
+          if (res?.success) {
+            toast.success("Listing created successfully");
+            router.push("/dashboard/listings");
+          }
         }
       } catch (_error) {
+        console.error("Listing creation error:", _error);
         toast.error("Failed to save listing");
       }
     });

@@ -6,20 +6,16 @@ import {
   SignInButton,
   SignUpButton,
   UserButton,
-  useUser,
 } from "@clerk/nextjs";
-import { Heart, Menu, User, X, Box } from "lucide-react";
+import { Box, Heart, Menu, User, X } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function Navbar() {
-  const { isLoaded } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -37,7 +33,11 @@ export function Navbar() {
     >
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-12">
-          <Link href="/" className="group flex items-center gap-3">
+          <Link
+            href="/"
+            aria-label="Home"
+            className="group flex items-center gap-3"
+          >
             <div className="relative flex h-10 w-10 items-center justify-center border border-primary bg-primary overflow-hidden">
               <span className="text-primary-foreground font-heading font-black text-xl">
                 N
@@ -85,12 +85,14 @@ export function Navbar() {
           <SignedIn>
             <Link
               href="/saved"
+              aria-label="Saved Properties"
               className="flex h-10 w-10 items-center justify-center text-muted-foreground hover:text-foreground transition-all"
             >
               <Heart className="h-4 w-4" />
             </Link>
             <Link
               href="/profile"
+              aria-label="User Profile"
               className="flex h-10 w-10 items-center justify-center text-muted-foreground hover:text-foreground transition-all"
             >
               <User className="h-4 w-4" />
@@ -141,6 +143,7 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
+                aria-label="Toggle menu"
                 className="rounded-none h-12 w-12 border border-border/20"
               >
                 {isOpen ? (
@@ -175,6 +178,27 @@ export function Navbar() {
                       <span className="text-lg font-heading font-bold uppercase tracking-widest italic">
                         Dashboard
                       </span>
+                      <Box className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </Link>
+                    <Link
+                      href="/saved"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center justify-between py-6 border-b border-border/10 group"
+                    >
+                      <span className="text-lg font-heading font-bold uppercase tracking-widest italic">
+                        Saved
+                      </span>
+                      <Heart className="h-5 w-5" />
+                    </Link>
+                    <Link
+                      href="/profile"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center justify-between py-6 border-b border-border/10 group"
+                    >
+                      <span className="text-lg font-heading font-bold uppercase tracking-widest italic">
+                        Profile
+                      </span>
+                      <User className="h-5 w-5" />
                     </Link>
                     <Link
                       href="/create"

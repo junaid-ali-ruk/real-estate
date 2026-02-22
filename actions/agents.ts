@@ -2,12 +2,12 @@
 
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { serverClient } from "@/lib/sanity/server";
 import { sanityFetch } from "@/lib/sanity/live";
 import {
   AGENT_BY_USER_ID_QUERY,
   AGENT_ID_BY_USER_QUERY,
 } from "@/lib/sanity/queries";
+import { serverClient } from "@/lib/sanity/server";
 import type { AgentOnboardingData, AgentProfileData } from "@/types";
 
 /**

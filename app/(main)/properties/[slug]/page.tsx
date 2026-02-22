@@ -20,10 +20,9 @@ import { SharePropertyButton } from "@/components/property/SharePropertyButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatBadge } from "@/components/ui/stat-badge";
-import { sanityFetch } from "@/lib/sanity/live";
-
-import { PROPERTY_BY_SLUG_QUERY } from "@/lib/sanity/queries";
 import { urlFor } from "@/lib/sanity/image";
+import { sanityFetch } from "@/lib/sanity/live";
+import { PROPERTY_BY_SLUG_QUERY } from "@/lib/sanity/queries";
 
 export async function generateMetadata({
   params,
@@ -166,6 +165,7 @@ export default async function PropertyPage({
 
       <script
         type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD requires dangerouslySetInnerHTML
         dangerouslySetInnerHTML={{
           __html: JSON.stringify([jsonLd, breadcrumbJsonLd]),
         }}
@@ -274,9 +274,38 @@ export default async function PropertyPage({
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                    {property.description}
-                  </p>
+                  <div className="text-muted-foreground whitespace-pre-wrap leading-relaxed text-lg space-y-4">
+                    {property.description
+                      ?.split("\n")
+                      .map((line: string, i: number) => {
+                        const trimmedLine = line.trim();
+                        if (
+                          trimmedLine.startsWith("-") ||
+                          trimmedLine.startsWith("•")
+                        ) {
+                          return (
+                            // biome-ignore lint/suspicious/noArrayIndexKey: order is static in description
+                            <div key={i} className="flex gap-3 pl-2 py-1">
+                              <span className="text-primary mt-1.5">•</span>
+                              <span>{trimmedLine.substring(1).trim()}</span>
+                            </div>
+                          );
+                        }
+                        if (trimmedLine.endsWith(":")) {
+                          return (
+                            <p
+                              // biome-ignore lint/suspicious/noArrayIndexKey: order is static in description
+                              key={i}
+                              className="font-bold text-foreground mt-6 mb-2"
+                            >
+                              {trimmedLine}
+                            </p>
+                          );
+                        }
+                        // biome-ignore lint/suspicious/noArrayIndexKey: order is static in description
+                        return <p key={i}>{line}</p>;
+                      })}
+                  </div>
                 </CardContent>
               </Card>
             )}

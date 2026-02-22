@@ -3,11 +3,8 @@
  * Converts addresses to coordinates (lat/lng)
  */
 
+import type { GeocodeFeature } from "@mapbox/mapbox-sdk/services/geocoding";
 import { logger } from "@/lib/logger";
-import type {
-  GeocodeFeature,
-  GeocodeResponse,
-} from "@mapbox/mapbox-sdk/services/geocoding";
 
 export interface GeocodingResult {
   lat: number;

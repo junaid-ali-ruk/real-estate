@@ -1,7 +1,7 @@
+import type { Metadata } from "next";
+import { HomeClient } from "@/components/home/HomeClient";
 import { sanityFetch } from "@/lib/sanity/live";
 import { FEATURED_PROPERTIES_QUERY } from "@/lib/sanity/queries";
-import { HomeClient } from "@/components/home/HomeClient";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Nestwell | Bespoke Architecture & Refined Living",

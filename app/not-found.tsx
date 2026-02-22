@@ -10,10 +10,13 @@ export default function NotFound() {
             404 Exception
           </div>
           <h1 className="text-5xl font-heading font-black uppercase tracking-tighter italic leading-none">
-            Estate Not<br/>Identified
+            Estate Not
+            <br />
+            Identified
           </h1>
           <p className="text-muted-foreground font-light italic text-lg leading-relaxed">
-            The coordinate you requested does not exist within our curated directory of architectural legacies.
+            The coordinate you requested does not exist within our curated
+            directory of architectural legacies.
           </p>
         </div>
 
@@ -26,7 +29,7 @@ export default function NotFound() {
             <Link href="/">Return to Collection</Link>
           </Button>
         </div>
-        
+
         <div className="pt-12 flex flex-col items-center gap-4">
           <div className="h-px w-12 bg-primary/20" />
           <p className="text-[10px] text-muted-foreground uppercase tracking-[0.4em]">

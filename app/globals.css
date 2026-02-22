@@ -124,7 +124,7 @@
   --foreground: oklch(0.95 0.01 240);
 
   /* Cards: Deep Void */
-  --card: oklch(0.12 0.01 240);
+  --card: oklch(0.16 0.01 240);
   --card-foreground: oklch(0.95 0.01 240);
 
   /* Primary: Pearl */
@@ -137,25 +137,29 @@
 
   /* Muted */
   --muted: oklch(0.14 0.01 240);
-  --muted-foreground: oklch(0.6 0.005 240);
+  --muted-foreground: oklch(0.7 0.005 240);
+
+  /* Popover */
+  --popover: oklch(0.12 0.01 240);
+  --popover-foreground: oklch(0.95 0.01 240);
 
   /* Accent: Dark Brass */
   --accent: oklch(0.3 0.08 85);
   --accent-foreground: oklch(0.95 0.01 240);
 
   /* Borders */
-  --border: oklch(0.18 0.02 240);
-  --input: oklch(0.18 0.02 240);
+  --border: oklch(0.25 0.02 240);
+  --input: oklch(0.25 0.02 240);
   --ring: oklch(0.95 0.01 240);
 
   /* Sidebar */
-  --sidebar: oklch(0.11 0.01 240);
+  --sidebar: oklch(0.15 0.01 240);
   --sidebar-foreground: oklch(0.95 0.01 240);
   --sidebar-primary: oklch(0.95 0.01 240);
   --sidebar-primary-foreground: oklch(0.1 0.01 240);
   --sidebar-accent: oklch(0.15 0.01 240);
   --sidebar-accent-foreground: oklch(0.95 0.01 240);
-  --sidebar-border: oklch(0.18 0.02 240);
+  --sidebar-border: oklch(0.25 0.02 240);
   --sidebar-ring: oklch(0.95 0.01 240);
 }
 
@@ -391,7 +395,7 @@ input[type="button"] {
 
 /* Luxury Utilities */
 .text-stroke {
-  -webkit-text-stroke: 1px currentColor;
+  -webkit-text-stroke: 1px var(--color-foreground);
   color: transparent;
 }
 

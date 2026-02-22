@@ -1,15 +1,15 @@
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { createAgentDocument } from "@/actions/agents";
 import { ListingForm } from "@/components/forms/ListingForm";
 import { sanityFetch } from "@/lib/sanity/live";
-import { AMENITIES_QUERY, AGENT_ID_BY_USER_QUERY } from "@/lib/sanity/queries";
-import { auth } from "@clerk/nextjs/server";
-import { createAgentDocument } from "@/actions/agents";
-import { redirect } from "next/navigation";
+import { AGENT_ID_BY_USER_QUERY, AMENITIES_QUERY } from "@/lib/sanity/queries";
 
 export const dynamic = "force-dynamic";
 
 export default async function CreatePropertyPage() {
   const { userId } = await auth();
-  
+
   if (!userId) {
     redirect("/sign-in");
   }
@@ -21,13 +21,19 @@ export default async function CreatePropertyPage() {
   });
 
   if (!agent) {
-    console.log(`[CREATE PAGE] No agent found for user ${userId}. Creating document...`);
+    console.log(
+      `[CREATE PAGE] No agent found for user ${userId}. Creating document...`,
+    );
     agent = await createAgentDocument();
-    
+
     // If creation still fails to return an agent, we might be in a race condition
     if (!agent) {
-      console.error(`[CREATE PAGE] Failed to create or retrieve agent for user ${userId}`);
-      throw new Error("Agent account could not be initialized. Please refresh or try again.");
+      console.error(
+        `[CREATE PAGE] Failed to create or retrieve agent for user ${userId}`,
+      );
+      throw new Error(
+        "Agent account could not be initialized. Please refresh or try again.",
+      );
     }
   }
 

@@ -1,23 +1,31 @@
 "use client";
 
-import { motion, useScroll, useTransform, Variants } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight,
-  MapPin,
-  Shield,
-  MoveRight,
-  Plus,
   ArrowUpRight,
-  Maximize2,
   Compass,
   Layers,
+  MapPin,
+  Maximize2,
+  MoveRight,
+  Plus,
+  Shield,
   User,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { useRef } from "react";
 import { PropertyGrid } from "@/components/property/PropertyGrid";
+import { FadeIn } from "@/components/ui/animations/FadeIn";
+import { ParallaxImage } from "@/components/ui/animations/ParallaxImage";
+import {
+  StaggerContainer,
+  StaggerItem,
+} from "@/components/ui/animations/StaggerContainer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useRef, useMemo } from "react";
+import type { Property } from "@/types";
 
 // Partner avatar data
 const partnerAvatars = [
@@ -31,7 +39,7 @@ const partnerAvatars = [
 export function HomeClient({
   featuredProperties,
 }: {
-  featuredProperties: any[];
+  featuredProperties: Property[];
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -48,33 +56,6 @@ export function HomeClient({
   const textX1 = useTransform(scrollYProgress, [0, 0.25], [0, -30]);
   const textX2 = useTransform(scrollYProgress, [0, 0.25], [0, 30]);
 
-  // Memoize variants
-  const containerVariants = useMemo<Variants>(
-    () => ({
-      hidden: { opacity: 0 },
-      visible: {
-        opacity: 1,
-        transition: {
-          staggerChildren: 0.1,
-          delayChildren: 0.1,
-        },
-      },
-    }),
-    [],
-  );
-
-  const itemVariants = useMemo<Variants>(
-    () => ({
-      hidden: { y: 60, opacity: 0 },
-      visible: {
-        y: 0,
-        opacity: 1,
-        transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-      },
-    }),
-    [],
-  );
-
   return (
     <div ref={containerRef} className="relative bg-background overflow-hidden">
       {/* Hero Section */}
@@ -90,50 +71,39 @@ export function HomeClient({
 
         <motion.div
           style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
           className="container relative z-10"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-0">
             {/* Left Content */}
             <div className="lg:col-span-8">
-              <motion.div
-                variants={itemVariants}
-                className="flex items-center gap-6 mb-16"
-              >
+              <FadeIn delay={0.1} className="flex items-center gap-6 mb-16">
                 <div className="h-px w-20 bg-primary/40" />
                 <span className="text-xs font-semibold uppercase tracking-[0.3em] text-primary/60">
                   Estate Vanguard 2026
                 </span>
-              </motion.div>
+              </FadeIn>
 
-                            <motion.div variants={itemVariants} className="relative">
-                              <h1 className="text-[13vw] lg:text-[10vw] font-heading font-black leading-[0.9] tracking-[-0.06em] uppercase mb-20">
-                                <motion.span 
-                                  style={{ x: textX1 }}
-                                  className="block"
-                                >
-                                  Bespoke
-                                </motion.span>
-                                <motion.span 
-                                  className="block italic font-light ml-[12%] text-stroke py-4 opacity-80"
-                                >
-                                  Living
-                                </motion.span>
-                                <motion.span 
-                                  style={{ x: textX2 }}
-                                  className="block text-primary"
-                                >
-                                  Refined
-                                </motion.span>
-                              </h1>
-                            </motion.div>
+              <FadeIn delay={0.2} className="relative">
+                <h1 className="text-[16vw] md:text-[13vw] lg:text-[10vw] font-heading font-black leading-[0.9] tracking-[-0.06em] uppercase mb-12 md:mb-20">
+                  <motion.span style={{ x: textX1 }} className="block">
+                    Bespoke
+                  </motion.span>
+                  <motion.span className="block italic font-light ml-[12%] text-stroke py-2 md:py-4 opacity-80">
+                    Living
+                  </motion.span>
+                  <motion.span
+                    style={{ x: textX2 }}
+                    className="block text-primary"
+                  >
+                    Refined
+                  </motion.span>
+                </h1>
+              </FadeIn>
 
-              <motion.div variants={itemVariants} className="max-w-2xl mt-16">
-                <div className="relative pl-16">
+              <FadeIn delay={0.3} className="max-w-2xl mt-12 md:mt-16">
+                <div className="relative pl-6 md:pl-16">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/20" />
-                  <p className="text-xl md:text-2xl font-light leading-relaxed text-muted-foreground mb-16">
+                  <p className="text-lg md:text-xl lg:text-2xl font-light leading-relaxed text-muted-foreground mb-12 md:mb-16">
                     We bridge the gap between vision and reality for the world's
                     most distinctive architectural legacies.
                   </p>
@@ -142,15 +112,17 @@ export function HomeClient({
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      <Button
-                        size="xl"
-                        className="group bg-primary text-primary-foreground rounded-none px-16 h-20 font-bold uppercase tracking-[0.2em]"
-                      >
-                        <span className="flex items-center gap-6">
-                          Enter Directory{" "}
-                          <MoveRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
-                        </span>
-                      </Button>
+                      <Link href="/properties" tabIndex={-1}>
+                        <Button
+                          size="xl"
+                          className="group bg-primary text-primary-foreground rounded-none px-8 md:px-16 h-16 md:h-20 text-xs md:text-sm font-bold uppercase tracking-[0.2em] w-full md:w-auto"
+                        >
+                          <span className="flex items-center gap-4 md:gap-6">
+                            Enter Directory{" "}
+                            <MoveRight className="h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-2 transition-transform duration-300" />
+                          </span>
+                        </Button>
+                      </Link>
                     </motion.div>
 
                     <div className="flex flex-col gap-4">
@@ -180,20 +152,24 @@ export function HomeClient({
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </FadeIn>
             </div>
 
             {/* Right Side */}
             <div className="lg:col-span-4 lg:pt-32">
-              <motion.div
-                variants={itemVariants}
+              <FadeIn
+                delay={0.4}
+                direction="left"
                 className="relative z-20 group mb-24"
               >
                 <div className="bg-background border border-border p-10 shadow-lg hover:shadow-xl transition-shadow duration-300">
                   <form action="/properties" method="GET" className="space-y-8">
                     <div className="space-y-6">
                       <div className="flex justify-between items-center">
-                        <label className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                        <label
+                          htmlFor="search-location"
+                          className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+                        >
                           Acquisition Search
                         </label>
                         <Compass className="h-5 w-5 text-muted-foreground" />
@@ -201,6 +177,7 @@ export function HomeClient({
                       <div className="relative">
                         <MapPin className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <Input
+                          id="search-location"
                           name="city"
                           placeholder="Global Territories..."
                           className="border-0 border-b-2 border-border rounded-none px-8 h-16 bg-transparent focus-visible:ring-0 focus-visible:border-primary transition-colors duration-300 text-lg font-semibold placeholder:font-light"
@@ -235,21 +212,24 @@ export function HomeClient({
                     </Button>
                   </form>
                 </div>
-              </motion.div>
+              </FadeIn>
 
-              <motion.div
-                variants={itemVariants}
+              <FadeIn
+                delay={0.5}
+                direction="left"
                 whileHover={{ y: -10 }}
                 className="aspect-square relative overflow-hidden group shadow-lg cursor-pointer"
               >
-                <motion.img
-                  initial={{ scale: 1.3 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 2.5, ease: "easeOut" }}
-                  src="/hero1.png"
-                  alt="Property Preview"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
+                <ParallaxImage speed={0.15} className="w-full h-full">
+                  <Image
+                    src="/hero1.png"
+                    alt="Property Preview"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    priority
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </ParallaxImage>
                 <div className="absolute inset-0 bg-primary/20 mix-blend-multiply group-hover:opacity-0 transition-opacity duration-300" />
 
                 <div className="absolute top-8 left-8">
@@ -275,28 +255,27 @@ export function HomeClient({
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </FadeIn>
             </div>
           </div>
         </motion.div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-24 bg-card relative">
+      <section className="py-16 md:py-24 bg-card relative">
         <div className="container">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-20">
+          <StaggerContainer
+            staggerDelay={0.15}
+            className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-20"
+          >
             {[
               { label: "Active Listings", value: "1.2k+", icon: Layers },
               { label: "Success Rate", value: "98%", icon: Shield },
               { label: "Global Reach", value: "50+", icon: Compass },
               { label: "Asset Volume", value: "$4.2B", icon: Maximize2 },
-            ].map((stat, i) => (
-              <motion.div
+            ].map((stat, _i) => (
+              <StaggerItem
                 key={stat.label}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
                 className="group flex flex-col items-center text-center"
               >
                 <div className="h-14 w-14 mb-6 flex items-center justify-center relative">
@@ -309,9 +288,9 @@ export function HomeClient({
                 <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {stat.label}
                 </div>
-              </motion.div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </section>
 
@@ -319,12 +298,7 @@ export function HomeClient({
       <section className="py-32 bg-secondary/20">
         <div className="container">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 mb-20">
-            <motion.div
-              initial={{ x: -60, opacity: 0 }}
-              whileInView={{ x: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              className="max-w-2xl"
-            >
+            <FadeIn direction="right" className="max-w-2xl">
               <div className="flex items-center gap-4 mb-6">
                 <div className="h-px w-10 bg-primary/40" />
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/60">
@@ -338,7 +312,7 @@ export function HomeClient({
                   Collection
                 </span>
               </h2>
-            </motion.div>
+            </FadeIn>
 
             <Link
               href="/properties"
@@ -356,12 +330,7 @@ export function HomeClient({
             </Link>
           </div>
 
-          <motion.div
-            initial={{ y: 60, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
+          <FadeIn direction="up">
             {featuredProperties && featuredProperties.length > 0 ? (
               <PropertyGrid properties={featuredProperties} />
             ) : (
@@ -372,7 +341,7 @@ export function HomeClient({
                 </p>
               </div>
             )}
-          </motion.div>
+          </FadeIn>
         </div>
       </section>
 
@@ -380,18 +349,17 @@ export function HomeClient({
       <section className="py-32 border-y border-border bg-card">
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
-            <motion.div
-              initial={{ x: -100, opacity: 0 }}
-              whileInView={{ x: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              className="lg:col-span-7 relative"
-            >
+            <FadeIn direction="right" className="lg:col-span-7 relative">
               <div className="aspect-[16/10] overflow-hidden relative shadow-lg group">
-                <img
-                  src="/hero2.png"
-                  alt="Architecture"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
+                <ParallaxImage className="w-full h-full" speed={-0.1}>
+                  <Image
+                    src="/hero2.png"
+                    alt="Architecture"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </ParallaxImage>
                 <div className="absolute inset-0 bg-primary/30 mix-blend-multiply group-hover:opacity-10 transition-opacity duration-300" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <motion.div
@@ -403,11 +371,9 @@ export function HomeClient({
                 </div>
               </div>
 
-              <motion.div
-                initial={{ y: 60, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5 }}
+              <FadeIn
+                delay={0.2}
+                direction="up"
                 className="absolute -bottom-12 -right-12 hidden xl:block w-80 bg-background border border-border p-8 shadow-lg"
               >
                 <h3 className="text-2xl font-heading font-bold mb-4 leading-tight">
@@ -423,15 +389,13 @@ export function HomeClient({
                     Our Advisory Standard
                   </span>
                 </div>
-              </motion.div>
-            </motion.div>
+              </FadeIn>
+            </FadeIn>
 
             <div className="lg:col-span-5 space-y-16">
               <div>
-                <motion.h2
-                  initial={{ y: 40, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  viewport={{ once: true }}
+                <FadeIn
+                  direction="up"
                   className="text-5xl font-heading font-bold uppercase tracking-tight leading-[0.85] mb-8"
                 >
                   Defining
@@ -439,11 +403,11 @@ export function HomeClient({
                   <span className="italic font-light text-stroke">
                     Principles
                   </span>
-                </motion.h2>
+                </FadeIn>
                 <div className="h-1 w-24 bg-primary/40" />
               </div>
 
-              <div className="space-y-10">
+              <StaggerContainer staggerDelay={0.15} className="space-y-10">
                 {[
                   {
                     title: "Sovereign Selection",
@@ -458,12 +422,9 @@ export function HomeClient({
                     desc: "Direct access to off-market inventory and emerging luxury territories.",
                   },
                 ].map((item, i) => (
-                  <motion.div
+                  <StaggerItem
                     key={item.title}
-                    initial={{ x: 60, opacity: 0 }}
-                    whileInView={{ x: 0, opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.15 }}
+                    direction="left"
                     className="group pl-12 relative"
                   >
                     <div className="absolute left-0 top-0 text-xl font-heading font-bold text-primary/20 group-hover:text-primary transition-colors">
@@ -475,9 +436,9 @@ export function HomeClient({
                     <p className="text-sm text-muted-foreground leading-relaxed border-l border-border pl-6 group-hover:border-primary transition-colors">
                       {item.desc}
                     </p>
-                  </motion.div>
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerContainer>
             </div>
           </div>
         </div>
@@ -513,34 +474,30 @@ export function HomeClient({
       </section>
 
       {/* CTA Section */}
-      <section className="py-48 bg-primary text-primary-foreground relative overflow-hidden">
-        <div className="absolute top-1/2 left-0 -translate-y-1/2 text-[25vw] font-bold uppercase tracking-tight opacity-[0.03] select-none whitespace-nowrap pointer-events-none">
+      <section className="py-24 md:py-48 bg-[#050505] text-white relative overflow-hidden">
+        <div className="absolute top-1/2 left-0 -translate-y-1/2 text-[25vw] font-bold uppercase tracking-tight opacity-[0.03] text-white select-none whitespace-nowrap pointer-events-none">
           MASTERPIECE LEGACY VANGUARD
         </div>
 
         <div className="container relative z-10">
           <div className="max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-              <motion.div
-                initial={{ x: -100, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
-                viewport={{ once: true }}
-              >
-                <h2 className="text-6xl font-heading font-bold uppercase tracking-tight leading-[0.85] mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20 items-center">
+              <FadeIn direction="right">
+                <h2 className="text-5xl md:text-6xl font-heading font-bold uppercase tracking-tight leading-[0.85] mb-6 md:mb-8">
                   Shape The
                   <br />
-                  <span className="italic font-light text-primary-foreground/60">
+                  <span className="italic font-light text-white/60">
                     Future
                   </span>
                 </h2>
-                <p className="text-lg font-light text-primary-foreground/70 leading-relaxed mb-12 max-w-md">
+                <p className="text-lg font-light text-white/70 leading-relaxed mb-12 max-w-md">
                   Whether you are liquidating a premium asset or searching for
                   your next architectural legacy, our team is ready to advise.
                 </p>
                 <div className="flex flex-col gap-4">
                   <Link
                     href="/create"
-                    className="group flex items-center justify-between p-6 border border-primary-foreground/20 hover:bg-primary-foreground hover:text-primary transition-all duration-300"
+                    className="group flex items-center justify-between p-6 border border-white/20 hover:bg-white hover:text-black transition-all duration-300"
                   >
                     <span className="text-lg font-heading font-bold uppercase">
                       Register New Asset
@@ -549,7 +506,7 @@ export function HomeClient({
                   </Link>
                   <Link
                     href="/properties"
-                    className="group flex items-center justify-between p-6 border border-primary-foreground/20 hover:bg-primary-foreground hover:text-primary transition-all duration-300"
+                    className="group flex items-center justify-between p-6 border border-white/20 hover:bg-white hover:text-black transition-all duration-300"
                   >
                     <span className="text-lg font-heading font-bold uppercase">
                       Begin Acquisition
@@ -557,30 +514,40 @@ export function HomeClient({
                     <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform" />
                   </Link>
                 </div>
-              </motion.div>
+              </FadeIn>
 
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                className="relative aspect-square border-2 border-primary-foreground/20 p-10 flex flex-col justify-center items-center text-center group"
+              <FadeIn
+                direction="up"
+                className="relative aspect-square border-2 border-white/20 p-10 flex flex-col justify-center items-center text-center group overflow-hidden"
               >
-                <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-primary-foreground/30" />
-                <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-primary-foreground/30" />
-                <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-primary-foreground/30" />
-                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-primary-foreground/30" />
-
-                <h3 className="text-4xl font-heading font-bold uppercase mb-6">
-                  Nestwell
-                </h3>
-                <p className="text-xs font-bold uppercase tracking-[0.3em] text-primary-foreground/60 mb-10">
-                  Luxury Estate Management
-                </p>
-                <div className="h-16 w-px bg-primary-foreground/20 group-hover:h-20 transition-all duration-300" />
-                <div className="mt-10 text-sm font-light text-primary-foreground/40 tracking-widest uppercase">
-                  Est. 2026
+                <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-60 transition-opacity duration-700">
+                  <Image
+                    src="/hero2.png"
+                    alt="Luxury Interior"
+                    fill
+                    className="object-cover scale-110 group-hover:scale-100 transition-transform duration-1000"
+                  />
+                  <div className="absolute inset-0 bg-[#050505]/60" />
                 </div>
-              </motion.div>
+
+                <div className="relative z-10">
+                  <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-white/30" />
+                  <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-white/30" />
+                  <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-white/30" />
+                  <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-white/30" />
+
+                  <h3 className="text-4xl font-heading font-bold uppercase mb-6 text-white">
+                    Nestwell
+                  </h3>
+                  <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/60 mb-10">
+                    Luxury Estate Management
+                  </p>
+                  <div className="h-16 w-px bg-white/20 group-hover:h-20 transition-all duration-300 mx-auto" />
+                  <div className="mt-10 text-sm font-light text-white/40 tracking-widest uppercase">
+                    Est. 2026
+                  </div>
+                </div>
+              </FadeIn>
             </div>
           </div>
         </div>

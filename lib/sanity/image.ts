@@ -11,7 +11,9 @@ export function urlFor(source: SanityImageSource) {
 /**
  * Enhanced urlFor that returns blur placeholder data if available in the Sanity image metadata
  */
-export function urlForWithPlaceholder(source: any) {
+export function urlForWithPlaceholder(
+  source: SanityImageSource & { asset?: { metadata?: { lqip?: string } } },
+) {
   const image = builder.image(source);
   const lqip = source?.asset?.metadata?.lqip;
 

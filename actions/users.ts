@@ -2,13 +2,13 @@
 
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { serverClient } from "@/lib/sanity/server";
 import { sanityFetch } from "@/lib/sanity/live";
 import {
   AGENT_BY_USER_ID_QUERY,
   USER_EXISTS_QUERY,
   USER_SAVED_IDS_QUERY,
 } from "@/lib/sanity/queries";
+import { serverClient } from "@/lib/sanity/server";
 import type { UserOnboardingData, UserProfileData } from "@/types";
 
 export async function completeUserOnboarding(data: UserOnboardingData) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Bath, Bed, Heart, MapPin, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Bath, Bed, Heart, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -41,21 +41,23 @@ export function PropertyCard({
       ? property.status.charAt(0).toUpperCase() + property.status.slice(1)
       : null;
 
-  const imageData = property.image ? urlForWithPlaceholder(property.image) : null;
+  const imageData = property.image
+    ? urlForWithPlaceholder(property.image)
+    : null;
 
   return (
-    <div className="group animate-in fade-in zoom-in duration-500 fill-mode-both">
+    <div className="group h-full">
       <Link href={`/properties/${property.slug}`} className="block h-full">
         <article className="bg-background overflow-hidden h-full flex flex-col">
           {/* Image Container */}
           <div className="relative aspect-[4/5] overflow-hidden border border-border group-hover:border-primary transition-colors duration-300">
-            {imageData ? (
+            {imageData && property.image ? (
               <Image
-                src={urlFor(property.image!).width(800).height(1000).url()}
+                src={urlFor(property.image).width(800).height(1000).url()}
                 alt={property.title}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-105 grayscale-[0.2] group-hover:grayscale-0"
+                className="object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0"
                 placeholder={imageData.placeholder}
                 blurDataURL={imageData.blurDataURL}
               />
@@ -106,7 +108,7 @@ export function PropertyCard({
           </div>
 
           {/* Content */}
-          <div className="pt-4 flex-1 flex flex-col justify-between">
+          <div className="p-5 flex-1 flex flex-col justify-between">
             <div>
               <div className="flex items-baseline justify-between gap-4 mb-1">
                 <h3 className="font-heading text-xl tracking-tight uppercase group-hover:text-primary transition-colors">
@@ -117,8 +119,14 @@ export function PropertyCard({
                 </span>
               </div>
 
-              <p className="text-sm font-medium text-muted-foreground line-clamp-1 mb-4 border-b border-border pb-3 group-hover:border-primary/50 transition-colors">
-                {property.title}
+              <p
+                className="text-sm font-medium text-muted-foreground line-clamp-1 mb-4 border-b border-border pb-3 group-hover:border-primary/50 transition-colors"
+                title={property.title}
+              >
+                {property.title?.includes("Error:") ||
+                property.title?.includes("Uncaught")
+                  ? "Property Details Unavailable"
+                  : property.title}
               </p>
             </div>
 

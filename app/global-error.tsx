@@ -11,10 +11,10 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    logger.error("Global application error", { 
-      message: error.message, 
+    logger.error("Global application error", {
+      message: error.message,
       digest: error.digest,
-      stack: error.stack 
+      stack: error.stack,
     });
   }, [error]);
 
@@ -28,20 +28,24 @@ export default function GlobalError({
                 Critical Exception
               </div>
               <h1 className="text-5xl font-heading font-black uppercase tracking-tighter italic leading-none">
-                Structural<br/>Failure
+                Structural
+                <br />
+                Failure
               </h1>
               <p className="text-muted-foreground font-light italic text-lg leading-relaxed">
-                A critical error has compromised the application framework. A full system reset is required.
+                A critical error has compromised the application framework. A
+                full system reset is required.
               </p>
             </div>
 
             <button
+              type="button"
               onClick={() => reset()}
               className="w-full rounded-none px-8 h-16 font-black uppercase tracking-widest bg-primary text-primary-foreground shadow-2xl hover:shadow-primary/20 transition-all"
             >
               Reinitialize Application
             </button>
-            
+
             <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] pt-8">
               Critical Error Signature: {error.digest || "Unknown"}
             </p>

@@ -284,13 +284,13 @@ type KPICardProps = {
 function KPICard({ title, value, icon: Icon, color }: KPICardProps) {
   const colorClasses = {
     primary: "bg-primary/10 text-primary",
-    secondary: "bg-secondary/20 text-secondary",
-    success: "bg-green-500/10 text-green-600",
-    warning: "bg-amber-500/10 text-amber-600",
+    secondary: "bg-blue-500/10 text-blue-500",
+    success: "bg-emerald-500/10 text-emerald-500",
+    warning: "bg-amber-500/10 text-amber-500",
   };
 
   return (
-    <div className="bg-background rounded-2xl border border-border/50 p-6 shadow-warm">
+    <div className="bg-background rounded-2xl border border-border p-6 shadow-warm">
       <div className="flex items-center justify-between mb-4">
         <div
           className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorClasses[color]}`}

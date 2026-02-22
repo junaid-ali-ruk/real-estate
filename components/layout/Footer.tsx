@@ -1,68 +1,58 @@
 "use client";
 
-import { Mail, ArrowRight, Instagram, Twitter, Linkedin } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { Instagram, Linkedin, Twitter } from "lucide-react";
+import Link from "next/link";
 
 export function Footer() {
-  const [email, setEmail] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    toast.success("Welcome to the inner circle.");
-    setEmail("");
-    setIsSubmitting(false);
-  };
-
   return (
-    <footer className="relative bg-primary text-primary-foreground overflow-hidden">
+    <footer className="relative bg-[#050505] text-white overflow-hidden border-t border-white/5">
       <div className="absolute -bottom-20 -right-20 text-[40vw] font-black opacity-[0.03] select-none pointer-events-none uppercase tracking-tighter leading-none">
         N
       </div>
       <div className="container relative z-10 py-24">
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-12">
           <div className="lg:col-span-4 space-y-10">
-            <Link href="/" className="group flex items-center gap-4 w-fit">
+            <Link
+              href="/"
+              aria-label="Home"
+              className="group flex items-center gap-4 w-fit"
+            >
               <div className="flex h-12 w-12 items-center justify-center bg-accent text-accent-foreground">
                 <span className="text-xl font-heading font-black">N</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-2xl font-black font-heading tracking-[0.2em] uppercase leading-none">
+                <span className="text-2xl font-black font-heading tracking-[0.2em] uppercase leading-none text-white">
                   Nestwell
                 </span>
-                <span className="text-[10px] font-bold tracking-[0.4em] uppercase text-primary-foreground/70 mt-1">
+                <span className="text-[10px] font-bold tracking-[0.4em] uppercase text-white/70 mt-1">
                   Luxury Estates
                 </span>
               </div>
             </Link>
-            <p className="text-primary-foreground/80 max-w-sm text-base leading-relaxed">
+            <p className="text-white/80 max-w-sm text-base leading-relaxed">
               Defining the next generation of home ownership. Our directory is
               curated for the architectural connoisseur.
             </p>
             <div className="flex gap-6">
               <Link
                 href="#"
-                className="text-primary-foreground/60 hover:text-accent transition-colors"
+                aria-label="Instagram"
+                className="text-white/60 hover:text-accent transition-colors"
               >
                 <Instagram className="h-5 w-5" />
               </Link>
               <Link
                 href="#"
-                className="text-primary-foreground/60 hover:text-accent transition-colors"
+                aria-label="Twitter"
+                className="text-white/60 hover:text-accent transition-colors"
               >
                 <Twitter className="h-5 w-5" />
               </Link>
               <Link
                 href="#"
-                className="text-primary-foreground/60 hover:text-accent transition-colors"
+                aria-label="LinkedIn"
+                className="text-white/60 hover:text-accent transition-colors"
               >
                 <Linkedin className="h-5 w-5" />
               </Link>
@@ -83,7 +73,7 @@ export function Footer() {
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className="text-base text-primary-foreground/70 hover:text-primary-foreground hover:pl-2 transition-all"
+                      className="text-base text-white/70 hover:text-white hover:pl-2 transition-all"
                     >
                       {item.label}
                     </Link>
@@ -101,7 +91,7 @@ export function Footer() {
                   <li>
                     <Link
                       href="/dashboard"
-                      className="text-base text-primary-foreground/70 hover:text-primary-foreground hover:pl-2 transition-all"
+                      className="text-base text-white/70 hover:text-white hover:pl-2 transition-all"
                     >
                       Dashboard
                     </Link>
@@ -109,7 +99,7 @@ export function Footer() {
                   <li>
                     <Link
                       href="/dashboard/listings"
-                      className="text-base text-primary-foreground/70 hover:text-primary-foreground hover:pl-2 transition-all"
+                      className="text-base text-white/70 hover:text-white hover:pl-2 transition-all"
                     >
                       Estate Management
                     </Link>
@@ -117,7 +107,7 @@ export function Footer() {
                   <li>
                     <Link
                       href="/create"
-                      className="text-base text-primary-foreground/70 hover:text-primary-foreground hover:pl-2 transition-all text-accent"
+                      className="text-base text-white/70 hover:text-white hover:pl-2 transition-all text-accent"
                     >
                       Register New Asset
                     </Link>
@@ -127,7 +117,7 @@ export function Footer() {
                   <li>
                     <Link
                       href="/sign-up"
-                      className="text-base text-primary-foreground/70 hover:text-primary-foreground hover:pl-2 transition-all"
+                      className="text-base text-white/70 hover:text-white hover:pl-2 transition-all"
                     >
                       Join the Vanguard
                     </Link>
@@ -148,7 +138,7 @@ export function Footer() {
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className="text-base text-primary-foreground/70 hover:text-primary-foreground hover:pl-2 transition-all"
+                      className="text-base text-white/70 hover:text-white hover:pl-2 transition-all"
                     >
                       {item.label}
                     </Link>

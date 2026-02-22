@@ -1,14 +1,13 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import { serverClient } from "@/lib/sanity/server";
 import { sanityFetch } from "@/lib/sanity/live";
-import { listingSchema } from "@/lib/validations";
 import {
   AGENT_ID_BY_USER_QUERY,
   PROPERTY_AGENT_REF_QUERY,
 } from "@/lib/sanity/queries";
+import { serverClient } from "@/lib/sanity/server";
+import { listingSchema } from "@/lib/validations";
 
 interface ImageReference {
   _type: "image";
@@ -82,31 +81,36 @@ export async function createListing(data: ListingFormDataWithImages) {
     throw new Error("Agent not found");
   }
 
-  await serverClient.create({
-    _type: "property",
-    title: data.title,
-    slug: { _type: "slug", current: slugify(data.title) },
-    description: data.description,
-    price: data.price,
-    propertyType: data.propertyType,
-    status: "active",
-    bedrooms: data.bedrooms,
-    bathrooms: data.bathrooms,
-    squareFeet: data.squareFeet,
-    yearBuilt: data.yearBuilt,
-    address: data.address,
-    location: data.location
-      ? { _type: "geopoint", lat: data.location.lat, lng: data.location.lng }
-      : undefined,
-    amenities: data.amenities || [],
-    images: data.images || [],
-    agent: { _type: "reference", _ref: agent._id },
-    featured: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  });
+  try {
+    const property = await serverClient.create({
+      _type: "property",
+      title: data.title,
+      slug: { _type: "slug", current: slugify(data.title) },
+      description: data.description,
+      price: data.price,
+      propertyType: data.propertyType,
+      status: "active",
+      bedrooms: data.bedrooms,
+      bathrooms: data.bathrooms,
+      squareFeet: data.squareFeet,
+      yearBuilt: data.yearBuilt,
+      address: data.address,
+      location: data.location
+        ? { _type: "geopoint", lat: data.location.lat, lng: data.location.lng }
+        : undefined,
+      amenities: data.amenities || [],
+      images: data.images || [],
+      agent: { _type: "reference", _ref: agent._id },
+      featured: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
 
-  redirect("/dashboard/listings");
+    return { success: true, id: property._id };
+  } catch (error) {
+    console.error("[CREATE LISTING ERROR]", error);
+    throw error;
+  }
 }
 
 export async function updateListing(
@@ -170,6 +174,8 @@ export async function updateListing(
       updatedAt: new Date().toISOString(),
     })
     .commit();
+
+  return { success: true };
 }
 
 export async function updateListingStatus(

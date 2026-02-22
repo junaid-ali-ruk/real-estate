@@ -1,6 +1,8 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { SanityLive } from "@/lib/sanity/live";
 import "./globals.css";
@@ -109,13 +111,23 @@ export default function RootLayout({
         <body
           className={`${inter.variable} ${plusJakarta.variable} ${geistMono.variable} font-body antialiased`}
         >
-          {/* Skip link for accessibility */}
-          <a href="#main" className="skip-link">
-            Skip to main content
-          </a>
-          {children}
-          <Toaster />
-          <SanityLive />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem={false}
+            forcedTheme="dark"
+            disableTransitionOnChange
+          >
+            <SmoothScrollProvider>
+              {/* Skip link for accessibility */}
+              <a href="#main" className="skip-link">
+                Skip to main content
+              </a>
+              {children}
+            </SmoothScrollProvider>
+            <Toaster />
+            <SanityLive />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

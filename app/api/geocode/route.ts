@@ -6,7 +6,8 @@ export async function GET(req: Request) {
   const address = searchParams.get("address");
   const types = searchParams.get("types") || "address";
   const limit = searchParams.get("limit") || (types === "address" ? "5" : "1");
-  const token = process.env.MAPBOX_TOKEN || process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+  const token =
+    process.env.MAPBOX_TOKEN || process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
   if (!address) {
     return NextResponse.json({ error: "Address is required" }, { status: 400 });
@@ -14,7 +15,10 @@ export async function GET(req: Request) {
 
   if (!token) {
     logger.error("Mapbox token not configured on server");
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 
   try {
